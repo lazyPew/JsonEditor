@@ -1,0 +1,70 @@
+{
+
+  "device1": {
+
+    "baudrate": {
+
+      "value": 19200,
+
+      "type": "baudrate_enum"
+
+    }
+
+  },
+
+  "device2": {
+
+    "baudrate": {
+
+      "value": 38400,
+
+      "type": "baudrate_enum"
+
+    }
+
+  },
+
+  "device3": {
+
+    "baudrate": {
+
+      "value": 230400,
+
+      "type": "baudrate_enum"
+
+    }
+
+  },
+
+  "baudrate_enum":{
+
+   "type": "enum",
+
+   "value": [
+
+    1200,
+
+    2400,
+
+    4800,
+
+    9600,
+
+    19200,
+
+    38400,
+
+    57600,
+
+    115200,
+
+    230400,
+
+    460800
+
+  ]
+
+ }
+
+}
+ 

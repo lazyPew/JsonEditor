@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file alias="testJson1">_json/test.json</file>
+        <file alias="testJson2">_json/test2.json</file>
+    </qresource>
+</RCC>
