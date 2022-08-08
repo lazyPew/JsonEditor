@@ -3,16 +3,21 @@
 
 #include <QObject>
 
-class DeviceListModel;
+class ValuesListModel;
 
 class ControlPanel : public QObject
 {
     Q_OBJECT
 
+    Q_PROPERTY(ValuesListModel* valuesListModel
+               READ valuesListModel
+               CONSTANT)
 public:
     ControlPanel(QObject *parent = nullptr);
 
 public slots:
+    ValuesListModel* valuesListModel() const { return _valuesListModel; }
+
     void saveToJsonFile();
     void openJsonFile(QString jsonPath);
 
@@ -25,7 +30,7 @@ private:
     void shutdown(int returnCode);
 
 private:
-    DeviceListModel* _deviceListModel;
+    ValuesListModel* _valuesListModel;
 };
 
 #endif // CONTROLPANEL_H

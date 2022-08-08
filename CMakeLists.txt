@@ -20,13 +20,15 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 set(SOURCES
     main.cpp
+    valueparser.cpp
     controlpanel.cpp
-    devicelistmodel.cpp
+    valueslistmodel.cpp
     )
 
 set(HEADERS
+    valueparser.h
     controlpanel.h
-    devicelistmodel.h
+    valueslistmodel.h
     )
 
 set(DISTFILES

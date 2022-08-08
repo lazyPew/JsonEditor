@@ -1,5 +1,5 @@
 #include "controlpanel.h"
-#include "devicelistmodel.h"
+#include "valueslistmodel.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -9,6 +9,7 @@
 
 ControlPanel::ControlPanel(QObject *parent)
     : QObject(parent)
+    , _valuesListModel{ new ValuesListModel(this) }
 {
     openJsonFile(":/testJson");
     connect(this, &ControlPanel::shutdownNow,
@@ -34,9 +35,23 @@ void ControlPanel::openJsonFile(QString jsonPath)
     }
 
     QJsonObject objFromDoc = jsonDoc.object();
-    qDebug() << objFromDoc;
 
+    //TODO move to jsonParser
+    for(QString devName : objFromDoc.keys()){
+        if(!devName.contains("_enum")){
+            for(QString valName : objFromDoc.value(devName).toObject().keys()){
+                ValueObject* newValue = new ValueObject(devName,valName,this);
+                _valuesListModel->addValueObject(newValue);
+            }
+//            objFromDoc.value()
+        }
+    }
+    qDebug() << _valuesListModel->rowCount(QModelIndex());
 }
+
+
+
+//===============================================================================
 
 void ControlPanel::turnOff() {
     int exitCode = 201; //Shutdown computer

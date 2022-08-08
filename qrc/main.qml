@@ -16,10 +16,15 @@ ApplicationWindow {
         id: mainHeader
     }
 
-    ScrollView {
+    MainPage{
+        id: mainPage
         anchors.fill: parent
-
     }
+
+//    ScrollView {
+//        anchors.fill: parent
+
+//    }
 
     TurnOffPopup{
         id: turnOffPopup
