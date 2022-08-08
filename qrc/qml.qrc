@@ -2,7 +2,20 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file alias="testJson1">_json/test.json</file>
-        <file alias="testJson2">_json/test2.json</file>
+        <file>MainElements/MainHeader.qml</file>
+        <file>MainElements/MainPage.qml</file>
+        <file>Popups/TurnOffPopup.qml</file>
+        <file alias="testJson">_json/test.json</file>
+        <file>Popups/OpenFilePopup.qml</file>
+    </qresource>
+    <qresource prefix="/Icons">
+        <file alias="exit">Icons/exit.png</file>
+        <file alias="lock">Icons/lock.png</file>
+        <file alias="save">Icons/save.png</file>
+        <file alias="unlock">Icons/unlock.png</file>
+        <file alias="open">Icons/open.png</file>
+        <file alias="delete">Icons/delete2.png</file>
+        <file alias="delete2">Icons/delete.png</file>
+        <file alias="add">Icons/add.png</file>
     </qresource>
 </RCC>

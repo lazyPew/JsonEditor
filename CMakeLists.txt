@@ -21,10 +21,12 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 set(SOURCES
     main.cpp
     controlpanel.cpp
+    devicelistmodel.cpp
     )
 
 set(HEADERS
     controlpanel.h
+    devicelistmodel.h
     )
 
 set(DISTFILES

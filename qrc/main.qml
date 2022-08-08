@@ -1,14 +1,31 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
+import QtQuick.Layouts 1.11
+
+import "MainElements"
+import "Popups"
 
 ApplicationWindow {
+    id: mainWindow
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Scroll")
+    width: 800
+    height: 600
+    title: qsTr("Редактор JSON")
+
+    header: MainHeader{
+        id: mainHeader
+    }
 
     ScrollView {
         anchors.fill: parent
 
+    }
+
+    TurnOffPopup{
+        id: turnOffPopup
+    }
+
+    OpenFilePopup{
+        id: openFilePopup
     }
 }
