@@ -19,7 +19,7 @@ public slots:
     ValuesListModel* valuesListModel() const { return _valuesListModel; }
 
     void saveToJsonFile();
-    void openJsonFile(QString jsonPath);
+    void openJsonFile(QString jsonPath = ":/test2");
 
     void turnOff();
 

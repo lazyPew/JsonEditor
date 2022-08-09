@@ -5,8 +5,9 @@
         <file>MainElements/MainHeader.qml</file>
         <file>MainElements/MainPage.qml</file>
         <file>Popups/TurnOffPopup.qml</file>
-        <file alias="testJson">_json/test.json</file>
         <file>Popups/OpenFilePopup.qml</file>
+        <file alias="test2">_json/test2.json</file>
+        <file alias="test1">_json/test1.json</file>
     </qresource>
     <qresource prefix="/Icons">
         <file alias="exit">Icons/exit.png</file>

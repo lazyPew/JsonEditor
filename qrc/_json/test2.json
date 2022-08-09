@@ -1,0 +1,111 @@
+{
+	
+	"device4": {
+
+		"ipStr": {
+		
+      		"value": "122.122.122.122",
+		
+      		"type" : "ipstring"
+		
+		},
+
+    	"ipDig": {
+			
+			"value": 4294967295,
+
+			"type" : "ipdigit"
+    
+		},
+
+		"dom": {
+        
+			"value": "yandex.ru",
+        
+			"type" : "domen"
+
+		}
+    
+	},
+
+	"deviceGnss":{
+      
+		"gnss1":{
+        
+			"value": "г. Москва ул. Мирная д.7",
+        
+			"type": "gnssstring"
+      
+		},
+
+		"gnss2":{
+        
+			"value": {
+            
+				"x": 34.12,
+            
+				"y": 57.12
+          
+			},
+        
+			"type":"gnssdigit"
+      
+		}
+    
+	},
+  
+  "arrayDevice":{
+    
+    "arrayVal":{
+	
+      "value": [1, 2, 3, 4, 5, 6],
+        
+			"type": "array"
+
+    }
+
+  },
+
+  "lastDevice":{
+		
+		"temp1":{
+	
+			"value": 23.97,
+        
+			"type": "float"
+      	
+		},
+	
+		"versionNumber":{
+	
+			"value": 23,
+        
+			"type": "int"
+      	
+		},
+		
+		"isOk":{
+	
+			"value": true,
+        
+			"type": "boolean"
+      	
+		},
+		
+		"nullValue":{
+	
+			"value": null,
+        
+			"type": "null"
+      	
+                },
+
+                "nothingValue":{
+                    "value":{},
+                    "type":"int"
+                }
+
+	}
+    
+}
+ 

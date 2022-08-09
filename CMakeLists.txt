@@ -20,13 +20,12 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 set(SOURCES
     main.cpp
-    valueparser.cpp
     controlpanel.cpp
     valueslistmodel.cpp
     )
 
 set(HEADERS
-    valueparser.h
+    valuemaps.h
     controlpanel.h
     valueslistmodel.h
     )

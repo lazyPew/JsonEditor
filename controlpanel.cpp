@@ -1,5 +1,6 @@
 #include "controlpanel.h"
 #include "valueslistmodel.h"
+#include "valuemaps.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -11,7 +12,7 @@ ControlPanel::ControlPanel(QObject *parent)
     : QObject(parent)
     , _valuesListModel{ new ValuesListModel(this) }
 {
-    openJsonFile(":/testJson");
+    openJsonFile();
     connect(this, &ControlPanel::shutdownNow,
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
 }
@@ -39,8 +40,16 @@ void ControlPanel::openJsonFile(QString jsonPath)
     //TODO move to jsonParser
     for(QString devName : objFromDoc.keys()){
         if(!devName.contains("_enum")){
-            for(QString valName : objFromDoc.value(devName).toObject().keys()){
-                ValueObject* newValue = new ValueObject(devName,valName,this);
+            QJsonObject devObject = objFromDoc.value(devName).toObject();
+            for(QString valName : devObject.keys()){
+                QJsonObject valJsonObject = devObject.value(valName).toObject();
+                ValueObject* newValue =
+                        new ValueObject(
+                            devName,
+                            valName,
+                            valueTypesMap.key(valJsonObject.value("type").toString()),
+                            valJsonObject.value("value"),
+                            this);
                 _valuesListModel->addValueObject(newValue);
             }
 //            objFromDoc.value()

@@ -2,24 +2,47 @@
 #define DEVICELISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QJsonValue>
 
 class ValueObject : public QObject
 {
     Q_OBJECT
 
+
 public:
+    enum ValueType
+    {
+        IpStringType,
+        IpDigitType,
+        DomenType,
+        EnumType,
+        GnssStringType,
+        GnssDigitType,
+        IntType,
+        FloatType,
+        BooleanType,
+        ArrayType,
+        NullType
+    };
+
     ValueObject(QString device,
                 QString name,
+                ValueType type,
+                QJsonValue value,
                 QObject *parent = nullptr);
 
-    QString device() const  { return _device; }
-    QString name() const    { return _name; }
-//    QString type() const    { return _type; }
+    QString device() const      { return _device; }
+    QString name() const        { return _name; }
+//    bool isEditable() const     { return _isEditable; }
+    ValueType type() const      { return _type; }
+    QJsonValue value() const   { return _value; }
 
 private:
     QString _device;
     QString _name;
-//    QString _type;
+//    bool _isEditable;
+    ValueType _type;
+    QJsonValue _value;
 };
 
 class ValuesListModel : public QAbstractListModel
@@ -31,7 +54,9 @@ public:
 
     enum Roles{
         DeviceRole = Qt::UserRole + 1,
-        NameRole
+        NameRole,
+        TypeRole,
+        ValueRole
     };
     void addValueObject(ValueObject*);
 
