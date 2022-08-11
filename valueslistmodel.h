@@ -8,7 +8,10 @@ class ValueObject : public QObject
 {
     Q_OBJECT
 
-
+    Q_PROPERTY(QString name
+               READ name
+               WRITE setName
+               NOTIFY nameChanged)
 public:
     enum ValueType
     {
@@ -24,6 +27,7 @@ public:
         ArrayType,
         NullType
     };
+    Q_ENUM(ValueType)
 
     ValueObject(QString device,
                 QString name,
@@ -33,16 +37,43 @@ public:
 
     QString device() const      { return _device; }
     QString name() const        { return _name; }
-//    bool isEditable() const     { return _isEditable; }
     ValueType type() const      { return _type; }
-    QJsonValue value() const   { return _value; }
+    QJsonValue value() const    { return _value; }
+    bool isEditable() const     { return _isEditable; }
+    bool isNull() const         { return _isNull; }
+
+    void setDevice(QString newValue);
+    void setName(QString newValue);
+    void setType(QString newValue);
+    void setValue(QJsonValue newValue);
+
+    void setIsEditable(bool newValue);
+    void setIsNull(bool newValue);
+    void setDescription(QString newValue);
+    void setDefault(QJsonValue newValue);
+
+signals:
+    void deviceChanged(QString);
+    void nameChanged(QString);
+    void typeChanged(QString);
+    void valueChanged(QJsonValue);
+    void isEditableChanged(bool);
+    void isNullChanged(bool);
+    void descriptionChanged(QString);
+    void defaultChanged(QJsonValue);
+
+private:
+    void valueConversion(QJsonValue);
 
 private:
     QString _device;
     QString _name;
-//    bool _isEditable;
     ValueType _type;
     QJsonValue _value;
+    bool _isEditable = true;
+    bool _isNull = true;
+    QString _description = "";
+    QJsonValue _dafault = QJsonValue::Null;
 };
 
 class ValuesListModel : public QAbstractListModel
@@ -68,6 +99,8 @@ public slots:
     QList<ValueObject*> valueObjectsList() const;
     ValueObject* valueObjectAt(int index) const;
 
+private:
+    QVariant convertJsonValue(ValueObject::ValueType, QJsonValue) const;
 private:
     QList<ValueObject*> _valueObjectsList;
 };

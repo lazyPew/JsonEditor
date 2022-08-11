@@ -8,6 +8,8 @@
         <file>Popups/OpenFilePopup.qml</file>
         <file alias="test2">_json/test2.json</file>
         <file alias="test1">_json/test1.json</file>
+        <file>ControlElements/ElementDelegate.qml</file>
+        <file>Popups/SavePopup.qml</file>
     </qresource>
     <qresource prefix="/Icons">
         <file alias="exit">Icons/exit.png</file>

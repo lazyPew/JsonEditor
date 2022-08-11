@@ -1,31 +1,37 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
 import QtQuick.Layouts 1.11
+import QtQuick.Controls 2.5
+
+import "../ControlElements"
 
 Page {
     id: root
 
-    ColumnLayout{
-        anchors.fill: parent
+//    ColumnLayout{
 
         ListView{
+            anchors.fill: parent
+//            width: parent.width
+            clip: true
+//            height: implicitHeight
+            ScrollBar.vertical: ScrollBar {
+                id:scroll
+                wheelEnabled: true
+            }
             id: valuesView
-            Layout.fillHeight: true
             Layout.margins: 4
             interactive: false
             spacing: 10
             model: panel.valuesListModel
-            delegate: Label{
-                text: "name = " + nameRole +
-                      " type = " + typeRole +
-                      " value = " + valueRole
-                font.pixelSize: 15
+            delegate: ElementDelegate{
+                width: parent.width - scroll.width
             }
             section.property: "deviceRole"
             section.criteria: ViewSection.FullString
             section.delegate: Control{
 
-                topPadding: 10
+                topPadding: 5
                 bottomPadding: 5
 
                 background: Rectangle{
@@ -33,6 +39,7 @@ Page {
                     border.width: 1
                     border.color: "white"
                 }
+
                 contentItem: Label{
                     text: section
                     font.pixelSize: 15
@@ -40,6 +47,6 @@ Page {
             }
 
         }
-    }
+//    }
 
 }

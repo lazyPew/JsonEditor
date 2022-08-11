@@ -33,4 +33,7 @@ ApplicationWindow {
     OpenFilePopup{
         id: openFilePopup
     }
+    SavePopup{
+        id: savePopup
+    }
 }

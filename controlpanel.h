@@ -18,7 +18,7 @@ public:
 public slots:
     ValuesListModel* valuesListModel() const { return _valuesListModel; }
 
-    void saveToJsonFile();
+    void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
 
     void turnOff();
@@ -28,6 +28,8 @@ signals:
 
 private:
     void shutdown(int returnCode);
+    void parseJson(QJsonObject jsonObject);
+    void registerQmlTypes();
 
 private:
     ValuesListModel* _valuesListModel;

@@ -25,7 +25,7 @@ ToolBar {
             id: saveButton
             icon.source: "/Icons/save"
             font.pixelSize: root.fontSize
-            onClicked: panel.saveToJsonFile()
+            onClicked: savePopup.open()
         }
 
         ToolButton{

@@ -3,6 +3,7 @@
 #include "valuemaps.h"
 
 #include <QCoreApplication>
+#include "QQmlEngine"
 #include <QDebug>
 #include <QFile>
 #include <QJsonObject>
@@ -13,13 +14,14 @@ ControlPanel::ControlPanel(QObject *parent)
     , _valuesListModel{ new ValuesListModel(this) }
 {
     openJsonFile();
+
     connect(this, &ControlPanel::shutdownNow,
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
 }
 
-void ControlPanel::saveToJsonFile()
+void ControlPanel::saveToJsonFile(QString newJsonPath)
 {
-    qDebug() << "save";
+    qDebug() << "save to" << newJsonPath;
 }
 
 void ControlPanel::openJsonFile(QString jsonPath)
@@ -28,37 +30,52 @@ void ControlPanel::openJsonFile(QString jsonPath)
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return;
-
     QJsonParseError jsonError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll(),&jsonError);
     if (jsonError.error != QJsonParseError::NoError){
         qDebug() << jsonError.errorString();
     }
+    file.close();
+    parseJson(jsonDoc.object());
 
-    QJsonObject objFromDoc = jsonDoc.object();
-
-    //TODO move to jsonParser
-    for(QString devName : objFromDoc.keys()){
+}
+void ControlPanel::parseJson(QJsonObject jsonObject)
+{
+    for(QString devName : jsonObject.keys()){
         if(!devName.contains("_enum")){
-            QJsonObject devObject = objFromDoc.value(devName).toObject();
+            QJsonObject devObject = jsonObject.value(devName).toObject();
             for(QString valName : devObject.keys()){
                 QJsonObject valJsonObject = devObject.value(valName).toObject();
-                ValueObject* newValue =
-                        new ValueObject(
-                            devName,
-                            valName,
-                            valueTypesMap.key(valJsonObject.value("type").toString()),
-                            valJsonObject.value("value"),
-                            this);
-                _valuesListModel->addValueObject(newValue);
+//                if(!valJsonObject.value("type").toString().contains("_enum"))
+                {
+                    ValueObject* newValue =
+                            new ValueObject(
+                                devName,
+                                valName,
+                                valueTypesMap.value(valJsonObject.value("type").toString()),
+                                valJsonObject.value("value"),
+                                this);
+                    _valuesListModel->addValueObject(newValue);
+                }
             }
-//            objFromDoc.value()
         }
     }
     qDebug() << _valuesListModel->rowCount(QModelIndex());
 }
 
 
+void ControlPanel::registerQmlTypes() {
+    static bool registered = false;
+    if (!registered) {
+        qmlRegisterUncreatableType<ValueObject>(
+                    "ValueObjectsModule",
+                    1, 0,
+                    "ValueObject", "NOPE"
+                    );
+        qRegisterMetaType<ValueObject::ValueType>("ValueType");
+        registered = true;
+    }
+}
 
 //===============================================================================
 
