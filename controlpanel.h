@@ -2,6 +2,7 @@
 #define CONTROLPANEL_H
 
 #include <QObject>
+#include "valuemaps.h"
 
 class ValuesListModel;
 
@@ -16,7 +17,8 @@ public:
     ControlPanel(QObject *parent = nullptr);
 
 public slots:
-    ValuesListModel* valuesListModel() const { return _valuesListModel; }
+    ValuesListModel* valuesListModel() const{ return _valuesListModel; }
+    QStringList listOfTypes() const         { return valueTypesMap.values(); }
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");

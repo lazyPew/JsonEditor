@@ -1,29 +1,30 @@
-import QtQuick 2.12
-import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.11
-import QtQuick.Controls 2.5
+import QtQuick 2.11
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.3
+import QtQuick.Controls.Material 2.2
 
 import "../ControlElements"
 
 Page {
     id: root
 
-//    ColumnLayout{
+    Flickable{
+        id:mainColumn
+        anchors.fill: parent
+
 
         ListView{
+            id: valuesView
             anchors.fill: parent
-//            width: parent.width
+
             clip: true
-//            height: implicitHeight
+            spacing: 20
             ScrollBar.vertical: ScrollBar {
                 id:scroll
                 wheelEnabled: true
             }
-            id: valuesView
             Layout.margins: 4
             interactive: false
-            spacing: 10
-            model: panel.valuesListModel
             delegate: ElementDelegate{
                 width: parent.width - scroll.width
             }
@@ -45,8 +46,8 @@ Page {
                     font.pixelSize: 15
                 }
             }
-
         }
-//    }
+    }
+    Component.onCompleted:valuesView.model = panel.valuesListModel
 
 }

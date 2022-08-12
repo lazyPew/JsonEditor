@@ -8,14 +8,10 @@ class ValueObject : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString name
-               READ name
-               WRITE setName
-               NOTIFY nameChanged)
 public:
     enum ValueType
     {
-        IpStringType,
+        IpStringType = 0,
         IpDigitType,
         DomenType,
         EnumType,
@@ -31,20 +27,20 @@ public:
 
     ValueObject(QString device,
                 QString name,
-                ValueType type,
+                uint typeCode,
                 QJsonValue value,
                 QObject *parent = nullptr);
-
+public slots:
     QString device() const      { return _device; }
     QString name() const        { return _name; }
-    ValueType type() const      { return _type; }
+    uint typeCode() const       { return _typeCode; }
     QJsonValue value() const    { return _value; }
     bool isEditable() const     { return _isEditable; }
     bool isNull() const         { return _isNull; }
 
     void setDevice(QString newValue);
     void setName(QString newValue);
-    void setType(QString newValue);
+    void setTypeCode(uint newValue);
     void setValue(QJsonValue newValue);
 
     void setIsEditable(bool newValue);
@@ -52,10 +48,12 @@ public:
     void setDescription(QString newValue);
     void setDefault(QJsonValue newValue);
 
+    QString typeString() const;
+
 signals:
     void deviceChanged(QString);
     void nameChanged(QString);
-    void typeChanged(QString);
+    void typeChanged(uint);
     void valueChanged(QJsonValue);
     void isEditableChanged(bool);
     void isNullChanged(bool);
@@ -68,7 +66,7 @@ private:
 private:
     QString _device;
     QString _name;
-    ValueType _type;
+    uint _typeCode;
     QJsonValue _value;
     bool _isEditable = true;
     bool _isNull = true;
@@ -87,12 +85,19 @@ public:
         DeviceRole = Qt::UserRole + 1,
         NameRole,
         TypeRole,
-        ValueRole
+        TypeCodeRole,
+        ValueRole,
+        IsEditableRole,
+        IsNullRole
     };
     void addValueObject(ValueObject*);
 
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
+    virtual bool setData(const QModelIndex &index,
+                         const QVariant &value,
+                         int role) override;
+    virtual Qt::ItemFlags flags(const QModelIndex &index) const;
     QHash<int, QByteArray> roleNames() const override;
 
 public slots:
@@ -100,7 +105,7 @@ public slots:
     ValueObject* valueObjectAt(int index) const;
 
 private:
-    QVariant convertJsonValue(ValueObject::ValueType, QJsonValue) const;
+    QVariant convertJsonValue(uint, QJsonValue) const;
 private:
     QList<ValueObject*> _valueObjectsList;
 };

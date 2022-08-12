@@ -3,6 +3,7 @@
 #include <QQmlContext>
 
 #include "controlpanel.h"
+#include "valuemaps.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,6 +14,7 @@ int main(int argc, char *argv[])
     ControlPanel* panel = new ControlPanel();
 
     engine.rootContext()->setContextProperty("panel", panel);
+    engine.rootContext()->setContextProperty("valueTypes", QVariant::fromValue(getStringTypes()));
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())

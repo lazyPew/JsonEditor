@@ -1,5 +1,6 @@
 #include "valueslistmodel.h"
 #include "valuemaps.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -8,13 +9,13 @@
 ValueObject::ValueObject(
         QString device,
         QString name,
-        ValueType type,
+        uint type,
         QJsonValue value,
         QObject *parent)
     : QObject(parent)
     , _device(device)
     , _name(name)
-    , _type(type)
+    , _typeCode(type)
     , _value(value)
 {}
 
@@ -28,19 +29,18 @@ void ValueObject::setDevice(QString newValue)
 
 void ValueObject::setName(QString newValue)
 {
-    qDebug() << newValue;
     if(newValue != _name){
         _name = newValue;
         emit nameChanged(_name);
     }
 }
 
-void ValueObject::setType(QString newValue)
+
+void ValueObject::setTypeCode(uint newValue)
 {
-    ValueObject::ValueType newType = valueTypesMap.value(newValue);
-    if(newType != _type){
-        _type = newType;
-        emit typeChanged(newValue);
+    if(newValue != _typeCode){
+        _typeCode = newValue;
+        emit typeChanged(_typeCode);
     }
 }
 
@@ -74,6 +74,12 @@ void ValueObject::setDefault(QJsonValue newValue)
 {
     valueConversion(newValue);
 }
+
+QString ValueObject::typeString() const
+{
+    return valueTypesMap.value(_typeCode);
+}
+
 
 void ValueObject::valueConversion(QJsonValue value)
 {
@@ -112,14 +118,56 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
     case static_cast<int>(Roles::NameRole):
         return _valueObjectsList.at(row)->name();
     case static_cast<int>(Roles::TypeRole):
-        return valueTypesMap.key(_valueObjectsList.at(row)->type());
+        return _valueObjectsList.at(row)->typeString();
+    case static_cast<int>(Roles::TypeCodeRole):
+        return _valueObjectsList.at(row)->typeCode();
     case static_cast<int>(Roles::ValueRole):
-        return convertJsonValue(_valueObjectsList.at(row)->type(),
+        return convertJsonValue(_valueObjectsList.at(row)->typeCode(),
                                 _valueObjectsList.at(row)->value());
 //        return _valueObjectsList.at(row)->value().toString();
+    case static_cast<int>(Roles::IsEditableRole):
+        return _valueObjectsList.at(row)->isEditable();
+    case static_cast<int>(Roles::IsNullRole):
+        return _valueObjectsList.at(row)->isNull();
     default:
         return QVariant();
     }
+}
+
+bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    ValueObject* valueObject = _valueObjectsList[index.row()];
+
+    switch(role){
+//    DeviceRole
+//    NameRole,
+//    TypeRole,
+//    ValueRole,
+//    IsEditableRole,
+//    IsNullRole
+    case NameRole:
+//        qDebug() << "Set Position in DataModelList";
+        valueObject->setName(value.toString());
+        break;
+
+    case TypeCodeRole:
+//        qDebug() << "Set Position in DataModelList";
+        valueObject->setTypeCode(uint(value.toInt()));
+        break;
+
+    case IsEditableRole:
+        valueObject->setIsEditable(value.toBool());
+        break;
+
+    default:
+        return false;
+    }
+    return true;
+}
+
+Qt::ItemFlags ValuesListModel::flags(const QModelIndex &index) const
+{
+    return QAbstractListModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QHash<int, QByteArray> ValuesListModel::roleNames() const
@@ -128,7 +176,10 @@ QHash<int, QByteArray> ValuesListModel::roleNames() const
     roles[static_cast<int>(Roles::DeviceRole)] = "deviceRole";
     roles[static_cast<int>(Roles::NameRole)] = "nameRole";
     roles[static_cast<int>(Roles::TypeRole)] = "typeRole";
+    roles[static_cast<int>(Roles::TypeCodeRole)] = "typeCodeRole";
     roles[static_cast<int>(Roles::ValueRole)] = "valueRole";
+    roles[static_cast<int>(Roles::IsEditableRole)] = "isEditableRole";
+    roles[static_cast<int>(Roles::IsNullRole)] = "isNullRole";
     return roles;
 }
 
@@ -142,7 +193,7 @@ ValueObject *ValuesListModel::valueObjectAt(int index) const
     return _valueObjectsList.at(index);
 }
 
-QVariant ValuesListModel::convertJsonValue(ValueObject::ValueType type, QJsonValue jsonValue) const
+QVariant ValuesListModel::convertJsonValue(uint type, QJsonValue jsonValue) const
 {
     switch (type) {
     case ValueObject::ValueType::IpStringType:
