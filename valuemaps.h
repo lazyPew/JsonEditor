@@ -21,6 +21,7 @@ static const QMap<uint, QString> valueTypesMap = {
 };
 
 static QStringList getStringTypes() { return valueTypesMap.values(); }
+static QString getType(uint typeCode) { return valueTypesMap.value(typeCode); }
 
 
 #endif // VALUEMAPS_H

@@ -12,7 +12,6 @@ Page {
         id:mainColumn
         anchors.fill: parent
 
-
         ListView{
             id: valuesView
             anchors.fill: parent
@@ -30,24 +29,30 @@ Page {
             }
             section.property: "deviceRole"
             section.criteria: ViewSection.FullString
+            section.labelPositioning:
+                ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
             section.delegate: Control{
+                width: parent.width - scroll.width
 
                 topPadding: 5
                 bottomPadding: 5
 
                 background: Rectangle{
-                    color: "transparent"
+                    color: Material.background
                     border.width: 1
                     border.color: "white"
                 }
 
                 contentItem: Label{
                     text: section
-                    font.pixelSize: 15
+                    font.pixelSize: 20
+                    font.bold: true
+                    horizontalAlignment: Text.AlignHCenter
+
                 }
             }
         }
     }
-    Component.onCompleted:valuesView.model = panel.valuesListModel
+    Component.onCompleted: valuesView.model = panel.valuesListModel
 
 }

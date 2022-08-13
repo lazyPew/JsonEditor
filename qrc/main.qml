@@ -11,6 +11,7 @@ ApplicationWindow {
     width: 800
     height: 600
     title: qsTr("Редактор JSON")
+    property double iconScaler: 1.2
 
     header: MainHeader{
         id: mainHeader

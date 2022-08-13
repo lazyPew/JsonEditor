@@ -12,6 +12,7 @@ ToolBar {
         anchors.fill: parent
         ToolButton{
             id: exitButton
+            scale: mainWindow.iconScaler
             icon.source: "/Icons/exit"
             font.pixelSize: root.fontSize
             onClicked: turnOffPopup.open()
@@ -23,6 +24,7 @@ ToolBar {
 
         ToolButton{
             id: saveButton
+            scale: mainWindow.iconScaler
             icon.source: "/Icons/save"
             font.pixelSize: root.fontSize
             onClicked: savePopup.open()
@@ -30,6 +32,7 @@ ToolBar {
 
         ToolButton{
             id: openButton
+            scale: mainWindow.iconScaler
             icon.source: "/Icons/open"
             font.pixelSize: root.fontSize
             onClicked: openFilePopup.open()//panel.openJsonFile(":/testJson")

@@ -29,7 +29,8 @@ public:
                 QString name,
                 uint typeCode,
                 QJsonValue value,
-                QObject *parent = nullptr);
+                QObject *parent = nullptr
+            );
 public slots:
     QString device() const      { return _device; }
     QString name() const        { return _name; }

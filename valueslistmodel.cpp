@@ -21,6 +21,7 @@ ValueObject::ValueObject(
 
 void ValueObject::setDevice(QString newValue)
 {
+    qDebug() << "new Value" << newValue;
     if(newValue != _device){
         _device = newValue;
         emit deviceChanged(_device);
@@ -77,7 +78,7 @@ void ValueObject::setDefault(QJsonValue newValue)
 
 QString ValueObject::typeString() const
 {
-    return valueTypesMap.value(_typeCode);
+    return getType(_typeCode);
 }
 
 
@@ -140,23 +141,25 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
 
     switch(role){
 //    DeviceRole
-//    NameRole,
-//    TypeRole,
 //    ValueRole,
-//    IsEditableRole,
-//    IsNullRole
+    case DeviceRole:
+        valueObject->setDevice(value.toString());
+        break;
+
     case NameRole:
-//        qDebug() << "Set Position in DataModelList";
         valueObject->setName(value.toString());
         break;
 
     case TypeCodeRole:
-//        qDebug() << "Set Position in DataModelList";
         valueObject->setTypeCode(uint(value.toInt()));
         break;
 
     case IsEditableRole:
         valueObject->setIsEditable(value.toBool());
+        break;
+
+    case IsNullRole:
+        valueObject->setIsNull(value.toBool());
         break;
 
     default:
@@ -207,7 +210,6 @@ QVariant ValuesListModel::convertJsonValue(uint type, QJsonValue jsonValue) cons
         return jsonValue.toDouble();
     case ValueObject::ValueType::BooleanType:
         return jsonValue.toBool();
-//        return jsonValue.toString();
     case ValueObject::ValueType::ArrayType:
         return jsonValue.toArray();
     case ValueObject::ValueType::GnssDigitType:

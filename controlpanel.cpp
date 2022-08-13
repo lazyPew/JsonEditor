@@ -42,6 +42,7 @@ void ControlPanel::parseJson(QJsonObject jsonObject)
 {
     for(QString devName : jsonObject.keys()){
         if(!devName.contains("_enum")){
+            _listOfDevices.append(devName);
             QJsonObject devObject = jsonObject.value(devName).toObject();
             for(QString valName : devObject.keys()){
                 QJsonObject valJsonObject = devObject.value(valName).toObject();

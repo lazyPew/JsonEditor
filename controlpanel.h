@@ -13,12 +13,16 @@ class ControlPanel : public QObject
     Q_PROPERTY(ValuesListModel* valuesListModel
                READ valuesListModel
                CONSTANT)
+    Q_PROPERTY(QStringList listOfDevices
+               READ listOfDevices
+               CONSTANT)
 public:
     ControlPanel(QObject *parent = nullptr);
 
 public slots:
     ValuesListModel* valuesListModel() const{ return _valuesListModel; }
-    QStringList listOfTypes() const         { return valueTypesMap.values(); }
+    QStringList listOfTypes() const         { return getStringTypes(); }
+    QStringList listOfDevices() const       { return _listOfDevices; }
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
@@ -35,6 +39,8 @@ private:
 
 private:
     ValuesListModel* _valuesListModel;
+
+    QStringList _listOfDevices;
 };
 
 #endif // CONTROLPANEL_H
