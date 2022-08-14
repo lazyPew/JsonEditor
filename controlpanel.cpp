@@ -13,7 +13,7 @@ ControlPanel::ControlPanel(QObject *parent)
     , _valuesListModel{ new ValuesListModel(this) }
 {
     openJsonFile();
-
+    registerQmlTypes();
     connect(this, &ControlPanel::shutdownNow,
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
 }

@@ -2,108 +2,160 @@ import QtQuick 2.10
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.11
 
+import "../Popups"
+import ValueObjectsModule 1.0
 
 ItemDelegate{
     id: delegate
     property int fontSize: 15
     property bool editable: isEditableRole
     property bool canBeNull: isNullRole
+
+    property var deviceValue: deviceRole
+
+    signal nullValue()
+    signal deviceChanged()
+
     property var textColor: editable
                             ? "white"
                             : "grey"
 
-    contentItem: RowLayout{
+    contentItem: ColumnLayout{
         Layout.fillWidth:true
         Layout.fillHeight:true
-        GridLayout{
-            columns: 2
+        RowLayout{
             Layout.fillWidth:true
             Layout.fillHeight:true
-            Label{
-                text: "name = "
-                wrapMode: Text.WordWrap
-                Layout.leftMargin: 10
-                font.pixelSize: fontSize
+            GridLayout{
+                columns: 2
+                Layout.fillWidth:true
+                Layout.fillHeight:true
+                Label{
+                    text: "Устройство : "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+                ComboBox{
+                    displayText: deviceRole
+                    model: panel.listOfDevices
+                    onActivated: {
+                        if(deviceRole != currentText){
+                            deviceRole = currentText
+                            displayText = currentText
+                            deviceChanged()
+                        }
+                    }
+                }
+                Label{
+                    text: "Имя значения : "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    text: nameRole
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        nameRole = text
+                    }
+                }
+
+                Label{
+                    text: "Тип значения : "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                ComboBox{
+                    id:combo
+                    currentIndex: typeCodeRole
+                    enabled: isEditableRole
+                    model: valueTypes
+                    onCurrentIndexChanged: typeCodeRole = currentIndex
+                }
+
+                Label{
+                    text: "Значение : "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id: valueText
+                    color: textColor
+                    text: JSON.stringify(valueRole)
+                    enabled: editable
+                    onEditingFinished: {
+                        if(!canBeNull && !text.length){
+                            text = JSON.stringify(valueRole)
+                            nullValue()
+                        }
+//                        else
+//                            if(typeRole == ValueObject.IpStringType
+//                                    || typeRole == ValueObject.DomenType
+//                                    || typeRole == ValueObject.GnssStringType)
+//                            valueRole = JSON.parse(text)
+//                        else
+                            valueRole = text
+                    }
+                }
+
             }
-            TextEdit{
-                text: nameRole
-                enabled: editable
-                color: textColor
-                onEditingFinished: {
-                    nameRole = text
+            Item{
+                Layout.fillWidth: true
+            }
+
+            ToolButton{
+                Layout.alignment: Qt.AlignRight
+                scale: mainWindow.iconScaler
+                enabled: editable && valueText.text.length
+                icon.source: canBeNull
+                      ? "/Icons/null2"
+                      : "/Icons/nonull2"
+                width:implicitWidth
+                onClicked:
+                {
+                    canBeNull = !canBeNull
+                    isNullRole = canBeNull
                 }
             }
-            Label{
-                text: "type = "
-                wrapMode: Text.WordWrap
-                Layout.leftMargin: 10
-                font.pixelSize: fontSize
-            }
-            ComboBox{
-                id:combo
-                currentIndex: typeCodeRole
-                enabled: isEditableRole
-                model: valueTypes
-                onCurrentIndexChanged: typeCodeRole = currentIndex
-            }
 
-            Label{
-                text: "value = "
-                wrapMode: Text.WordWrap
-                Layout.leftMargin: 10
-                font.pixelSize: fontSize
-            }
-            TextEdit{
-                color: textColor
-                text: JSON.stringify(valueRole)
-                enabled: editable
-            }
 
-        }
-        Item{
-            Layout.fillWidth: true
-        }
-        ToolButton{
-            Layout.alignment: Qt.AlignRight
-            scale: mainWindow.iconScaler
-            enabled: editable
-            icon.source: canBeNull
-                  ? "/Icons/null2"
-                  : "/Icons/nonull2"
-            width:implicitWidth
-            onClicked:
-            {
-                canBeNull = !canBeNull
-                isNullRole = canBeNull
+            ToolButton{
+                Layout.alignment: Qt.AlignRight
+                scale: mainWindow.iconScaler
+                icon.source: editable
+                      ? "/Icons/unlock"
+                      : "/Icons/lock"
+                width:implicitWidth
+                onClicked:
+                {
+                    editable = !editable
+                    combo.enabled = editable
+                    isEditableRole = editable
+                }
             }
         }
-
-//        ComboBox{
-//            currentIndex: deviceRole
-//            enabled: editable
-//            model: panel.listOfDevices
-//            onCurrentIndexChanged: {
-//                console.log(currentIndex)
-//                console.log(currentText)
-//                console.log(deviceRole)
-//                deviceRole = currentIndex
-//            }
-//        }
-
-        ToolButton{
-            Layout.alignment: Qt.AlignRight
-            scale: mainWindow.iconScaler
-            icon.source: editable
-                  ? "/Icons/unlock"
-                  : "/Icons/lock"
-            width:implicitWidth
-            onClicked:
-            {
-                editable = !editable
-                combo.enabled = editable
-                isEditableRole = editable
-            }
+        Label{
+            text: "Описание : "
+            wrapMode: Text.WordWrap
+            Layout.leftMargin: 10
+            font.pixelSize: fontSize
         }
 
+        TextArea{
+            wrapMode: TextEdit.Wrap
+
+            Layout.fillWidth:true
+            clip: true
+            onEditingFinished: {
+                descRole = text
+            }
+        }
     }
 }

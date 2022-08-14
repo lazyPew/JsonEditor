@@ -38,15 +38,15 @@ public slots:
     QJsonValue value() const    { return _value; }
     bool isEditable() const     { return _isEditable; }
     bool isNull() const         { return _isNull; }
+    QString desc() const        { return _desc; }
 
     void setDevice(QString newValue);
     void setName(QString newValue);
     void setTypeCode(uint newValue);
     void setValue(QJsonValue newValue);
-
     void setIsEditable(bool newValue);
     void setIsNull(bool newValue);
-    void setDescription(QString newValue);
+    void setDesc(QString newValue);
     void setDefault(QJsonValue newValue);
 
     QString typeString() const;
@@ -58,7 +58,7 @@ signals:
     void valueChanged(QJsonValue);
     void isEditableChanged(bool);
     void isNullChanged(bool);
-    void descriptionChanged(QString);
+    void descChanged(QString);
     void defaultChanged(QJsonValue);
 
 private:
@@ -71,8 +71,8 @@ private:
     QJsonValue _value;
     bool _isEditable = true;
     bool _isNull = true;
-    QString _description = "";
-    QJsonValue _dafault = QJsonValue::Null;
+    QString _desc = "";
+    QJsonValue _default = QJsonValue::Null;
 };
 
 class ValuesListModel : public QAbstractListModel
@@ -89,7 +89,9 @@ public:
         TypeCodeRole,
         ValueRole,
         IsEditableRole,
-        IsNullRole
+        IsNullRole,
+        DescRole,
+        DefaultRole
     };
     void addValueObject(ValueObject*);
 
@@ -106,7 +108,8 @@ public slots:
     ValueObject* valueObjectAt(int index) const;
 
 private:
-    QVariant convertJsonValue(uint, QJsonValue) const;
+    QVariant convertFromJsonValue(uint, QJsonValue) const;
+    QJsonValue convertToJsonValue(uint, QVariant) const;
 private:
     QList<ValueObject*> _valueObjectsList;
 };

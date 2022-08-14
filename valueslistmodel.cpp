@@ -21,8 +21,8 @@ ValueObject::ValueObject(
 
 void ValueObject::setDevice(QString newValue)
 {
-    qDebug() << "new Value" << newValue;
     if(newValue != _device){
+        qDebug() << "new Value" << newValue;
         _device = newValue;
         emit deviceChanged(_device);
     }
@@ -47,8 +47,12 @@ void ValueObject::setTypeCode(uint newValue)
 
 void ValueObject::setValue(QJsonValue newValue)
 {
-    valueConversion(newValue);
-}
+    qDebug() << _value << newValue;
+    if(newValue != _value){
+        qDebug() << "new Value" << newValue;
+        _value = newValue;
+        emit valueChanged(_value);
+    }}
 
 void ValueObject::setIsEditable(bool newValue)
 {
@@ -64,11 +68,11 @@ void ValueObject::setIsNull(bool newValue)
         emit isNullChanged(_isNull);
     }
 }
-void ValueObject::setDescription(QString newValue)
+void ValueObject::setDesc(QString newValue)
 {
-    if(newValue != _description){
-        _description = newValue;
-        emit descriptionChanged(_description);
+    if(newValue != _desc){
+        _desc = newValue;
+        emit descChanged(_desc);
     }
 }
 void ValueObject::setDefault(QJsonValue newValue)
@@ -123,13 +127,15 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
     case static_cast<int>(Roles::TypeCodeRole):
         return _valueObjectsList.at(row)->typeCode();
     case static_cast<int>(Roles::ValueRole):
-        return convertJsonValue(_valueObjectsList.at(row)->typeCode(),
+        return convertFromJsonValue(_valueObjectsList.at(row)->typeCode(),
                                 _valueObjectsList.at(row)->value());
 //        return _valueObjectsList.at(row)->value().toString();
     case static_cast<int>(Roles::IsEditableRole):
         return _valueObjectsList.at(row)->isEditable();
     case static_cast<int>(Roles::IsNullRole):
         return _valueObjectsList.at(row)->isNull();
+    case static_cast<int>(Roles::DescRole):
+        return _valueObjectsList.at(row)->desc();
     default:
         return QVariant();
     }
@@ -142,12 +148,18 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
     switch(role){
 //    DeviceRole
 //    ValueRole,
+
     case DeviceRole:
+        qDebug() << "new Value" ;
         valueObject->setDevice(value.toString());
         break;
 
     case NameRole:
         valueObject->setName(value.toString());
+        break;
+
+    case ValueRole:
+        valueObject->setValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
     case TypeCodeRole:
@@ -160,6 +172,10 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
 
     case IsNullRole:
         valueObject->setIsNull(value.toBool());
+        break;
+
+    case DescRole:
+        valueObject->setDesc(value.toString());
         break;
 
     default:
@@ -183,6 +199,7 @@ QHash<int, QByteArray> ValuesListModel::roleNames() const
     roles[static_cast<int>(Roles::ValueRole)] = "valueRole";
     roles[static_cast<int>(Roles::IsEditableRole)] = "isEditableRole";
     roles[static_cast<int>(Roles::IsNullRole)] = "isNullRole";
+    roles[static_cast<int>(Roles::DescRole)] = "descRole";
     return roles;
 }
 
@@ -196,7 +213,7 @@ ValueObject *ValuesListModel::valueObjectAt(int index) const
     return _valueObjectsList.at(index);
 }
 
-QVariant ValuesListModel::convertJsonValue(uint type, QJsonValue jsonValue) const
+QVariant ValuesListModel::convertFromJsonValue(uint type, QJsonValue jsonValue) const
 {
     switch (type) {
     case ValueObject::ValueType::IpStringType:
@@ -219,6 +236,31 @@ QVariant ValuesListModel::convertJsonValue(uint type, QJsonValue jsonValue) cons
 
     default:
         return QVariant();
+    }
+}
+
+QJsonValue ValuesListModel::convertToJsonValue(uint type, QVariant qvar) const
+{
+    switch (type) {
+    case ValueObject::ValueType::IpStringType:
+    case ValueObject::ValueType::DomenType:
+    case ValueObject::ValueType::GnssStringType:
+        return QJsonValue(qvar.toString());
+    case ValueObject::ValueType::IpDigitType:
+    case ValueObject::ValueType::IntType:
+        return QJsonValue(qvar.toInt());
+    case ValueObject::ValueType::FloatType:
+        return QJsonValue(qvar.toDouble());
+    case ValueObject::ValueType::BooleanType:
+        return QJsonValue(qvar.toBool());
+    case ValueObject::ValueType::ArrayType:
+        return QJsonArray(QJsonDocument::fromJson(
+                              qvar.toByteArray()).array());
+    case ValueObject::ValueType::GnssDigitType:
+    case ValueObject::ValueType::EnumType:
+    case ValueObject::ValueType::NullType:
+        return QJsonObject(QJsonDocument::fromJson(
+                               qvar.toByteArray()).object());
     }
 }
 
