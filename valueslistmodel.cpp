@@ -129,7 +129,6 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
     case static_cast<int>(Roles::ValueRole):
         return convertFromJsonValue(_valueObjectsList.at(row)->typeCode(),
                                 _valueObjectsList.at(row)->value());
-//        return _valueObjectsList.at(row)->value().toString();
     case static_cast<int>(Roles::IsEditableRole):
         return _valueObjectsList.at(row)->isEditable();
     case static_cast<int>(Roles::IsNullRole):
@@ -245,7 +244,7 @@ QJsonValue ValuesListModel::convertToJsonValue(uint type, QVariant qvar) const
     case ValueObject::ValueType::IpStringType:
     case ValueObject::ValueType::DomenType:
     case ValueObject::ValueType::GnssStringType:
-        return QJsonValue(qvar.toString());
+        return QJsonValue(qvar.toString().replace(QRegExp("\""), ""));
     case ValueObject::ValueType::IpDigitType:
     case ValueObject::ValueType::IntType:
         return QJsonValue(qvar.toInt());

@@ -37,6 +37,7 @@ ItemDelegate{
                     font.pixelSize: fontSize
                 }
                 ComboBox{
+                    id:deviceCombo
                     displayText: deviceRole
                     model: panel.listOfDevices
                     onActivated: {
@@ -71,7 +72,7 @@ ItemDelegate{
                 }
 
                 ComboBox{
-                    id:combo
+                    id:typeCombo
                     currentIndex: typeCodeRole
                     enabled: isEditableRole
                     model: valueTypes
@@ -94,13 +95,7 @@ ItemDelegate{
                         if(!canBeNull && !text.length){
                             text = JSON.stringify(valueRole)
                             nullValue()
-                        }
-//                        else
-//                            if(typeRole == ValueObject.IpStringType
-//                                    || typeRole == ValueObject.DomenType
-//                                    || typeRole == ValueObject.GnssStringType)
-//                            valueRole = JSON.parse(text)
-//                        else
+                        }else
                             valueRole = text
                     }
                 }
@@ -136,7 +131,8 @@ ItemDelegate{
                 onClicked:
                 {
                     editable = !editable
-                    combo.enabled = editable
+                    deviceCombo.enabled = editable
+                    typeCombo.enabled = editable
                     isEditableRole = editable
                 }
             }
