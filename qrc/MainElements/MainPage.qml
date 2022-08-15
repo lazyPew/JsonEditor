@@ -8,6 +8,19 @@ import "../ControlElements"
 Page {
     id: root
 
+    header: RowLayout{
+        Layout.fillWidth: true
+        height: 50
+        ToolButton{
+            id: exitButton
+            Layout.fillWidth: true
+            Layout.preferredHeight: 43
+            text: "Добавить пустое значение"
+            scale: mainWindow.iconScaler
+            icon.source: "/Icons/add"
+            onClicked: addValue()
+        }
+    }
     ListView{
         id: valuesView
         anchors.fill: parent
@@ -23,12 +36,15 @@ Page {
 
         }
 
-        delegate: ElementDelegate{
+        delegate:
+            ElementDelegate{
             width: parent.width - scroll.width
             onNullValue: nullIsNotAllowedPopup.open()
             onDeviceChanged: {
                 valuesView.forceLayout()
             }
+            onDeleteValue: removeValue(index)
+
         }
         section.property: "deviceRole"
         section.criteria: ViewSection.FullString
@@ -83,5 +99,13 @@ Page {
                 onClicked: nullIsNotAllowedPopup.close()
             }
         }
+    }
+    function addValue(){
+        panel.addEmptyValueObject()
+        valuesView.forceLayout()
+    }
+    function removeValue(index){
+        panel.removeValueObject(index)
+        valuesView.forceLayout()
     }
 }

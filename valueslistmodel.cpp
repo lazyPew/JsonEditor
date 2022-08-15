@@ -9,15 +9,36 @@
 ValueObject::ValueObject(
         QString device,
         QString name,
-        uint type,
+        uint typeCode,
+        QObject *parent,
         QJsonValue value,
-        QObject *parent)
+        bool isEditable,
+        bool isNull,
+        QJsonValue defaultValue,
+        QString desc)
     : QObject(parent)
     , _device(device)
     , _name(name)
-    , _typeCode(type)
+    , _typeCode(typeCode)
     , _value(value)
+    , _isEditable(isEditable)
+    , _isNull(isNull)
+    , _defaultValue(defaultValue)
+    , _desc(desc)
 {}
+
+QJsonObject ValueObject::getJson()
+{
+    QJsonObject valueJson;
+    valueJson.insert("type", type());
+    valueJson.insert("value", value());
+    valueJson.insert("isEditable", isEditable());
+    valueJson.insert("isNull", isNull());
+    valueJson.insert("default", defaultValue());
+    valueJson.insert("desc", desc());
+    qDebug() << valueJson;
+    return valueJson;
+}
 
 void ValueObject::setDevice(QString newValue)
 {
@@ -86,6 +107,8 @@ void ValueObject::setDesc(QString newValue)
         emit descChanged(_desc);
     }
 }
+
+
 void ValueObject::setDefaultValue(QJsonValue newValue)
 {
     qDebug() << _defaultValue << newValue;
@@ -226,6 +249,45 @@ ValueObject *ValuesListModel::valueObjectAt(int index) const
 {
     return _valueObjectsList.at(index);
 }
+
+void ValuesListModel::valueObjectRemoving(int index)
+{
+    beginRemoveRows(QModelIndex(), index, index);
+    _valueObjectsList.removeAt(index);
+    endRemoveRows();
+}
+
+void ValuesListModel::clearList()
+{
+    int endIndex = _valueObjectsList.size() - 1;
+    beginRemoveRows(QModelIndex(),0, endIndex);
+    _valueObjectsList.clear();
+    endRemoveRows();
+}
+
+QJsonObject ValuesListModel::createJson(QStringList listOfDevices)
+{
+    QJsonObject allValuesJsonObject;
+    for(QString deviceStr: listOfDevices){
+        QJsonObject deviceJsonObject = createJsonForDevice(deviceStr);
+        if(!deviceJsonObject.isEmpty())
+            allValuesJsonObject.insert(deviceStr, deviceJsonObject);
+    }
+    return allValuesJsonObject;
+}
+
+
+QJsonObject ValuesListModel::createJsonForDevice(QString deviceStr)
+{
+    QJsonObject deviceJsonObject;
+    for(ValueObject* valueObject : _valueObjectsList){
+        if(valueObject->device() == deviceStr){
+            deviceJsonObject.insert(valueObject->name(), valueObject->getJson());
+        }
+    }
+    return deviceJsonObject;
+}
+
 
 QVariant ValuesListModel::convertFromJsonValue(uint type, QJsonValue jsonValue) const
 {

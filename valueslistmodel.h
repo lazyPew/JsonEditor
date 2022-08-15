@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QJsonValue>
+#include <QJsonObject>
 
 class ValueObject : public QObject
 {
@@ -28,8 +29,12 @@ public:
     ValueObject(QString device,
                 QString name,
                 uint typeCode,
-                QJsonValue value,
-                QObject *parent = nullptr
+                QObject *parent = nullptr,
+                QJsonValue value = QJsonValue::Null,
+                bool isEditable = true,
+                bool isNull = true,
+                QJsonValue defaultValue = QJsonValue::Null,
+                QString desc = ""
             );
 public slots:
     QString device() const              { return _device; }
@@ -52,6 +57,8 @@ public slots:
     void setDefaultValue(QJsonValue newValue);
     void setDesc(QString newValue);
 
+    QJsonObject getJson();
+
 signals:
     void deviceChanged(QString);
     void nameChanged(QString);
@@ -64,9 +71,6 @@ signals:
     void descChanged(QString);
 
 private:
-    void valueConversion(QJsonValue);
-
-private:
     QString _device;
     QString _name;
     uint _typeCode;
@@ -74,8 +78,8 @@ private:
     QJsonValue _value;
     bool _isEditable = true;
     bool _isNull = true;
-    QString _desc = "";
     QJsonValue _defaultValue = QJsonValue::Null;
+    QString _desc = "";
 };
 
 class ValuesListModel : public QAbstractListModel
@@ -109,10 +113,16 @@ public:
 public slots:
     QList<ValueObject*> valueObjectsList() const;
     ValueObject* valueObjectAt(int index) const;
+    void valueObjectRemoving(int index);
+
+    void clearList();
+    QJsonObject createJson(QStringList);
 
 private:
     QVariant convertFromJsonValue(uint, QJsonValue) const;
     QJsonValue convertToJsonValue(uint, QVariant) const;
+
+    QJsonObject createJsonForDevice(QString);
 private:
     QList<ValueObject*> _valueObjectsList;
 };

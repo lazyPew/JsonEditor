@@ -30,7 +30,8 @@ public slots:
     QStringList listOfEnums() const                         { return _customEnumsMap.keys(); }
     QVariantList valuesListOfEnum(QString enumString) const { return _customEnumsMap.value(enumString); }
 
-    void addValueObject();
+    void addEmptyValueObject();
+    void removeValueObject(int index);
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");

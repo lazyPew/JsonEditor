@@ -9,7 +9,7 @@ ApplicationWindow {
     id: mainWindow
     visible: true
     width: 800
-    height: 600
+    height: 700
     title: qsTr("Редактор JSON")
     property double iconScaler: 1.2
 

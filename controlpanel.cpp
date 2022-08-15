@@ -5,7 +5,9 @@
 #include "QQmlEngine"
 #include <QDebug>
 #include <QFile>
+#include <QDateTime>
 #include <QJsonArray>
+#include <QJsonValue>
 #include <QJsonObject>
 #include <QJsonDocument>
 
@@ -19,18 +21,43 @@ ControlPanel::ControlPanel(QObject *parent)
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
 }
 
-void ControlPanel::addValueObject()
+void ControlPanel::addEmptyValueObject()
 {
+    ValueObject* newValue = new ValueObject(
+                *listOfDevices().begin(),
+                "",
+                ValueObject::ValueType::NullType,
+                this,
+                QJsonValue::Null
+                );
+    _valuesListModel->addValueObject(newValue);
+}
 
+void ControlPanel::removeValueObject(int index)
+{
+    _valuesListModel->valueObjectRemoving(index);
 }
 
 void ControlPanel::saveToJsonFile(QString newJsonPath)
 {
+    if (newJsonPath.isEmpty())
+         newJsonPath = (QCoreApplication::applicationDirPath()).append("/" + QDateTime::currentDateTime().toString("MMdd_HHmmss") + ".json");
     qDebug() << "save to" << newJsonPath;
+    QJsonObject objForJsonDoc = _valuesListModel->createJson(_listOfDevices);
+    QJsonDocument docJson(objForJsonDoc);
+
+    QFile file(newJsonPath);
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+        return;
+    QTextStream out(&file);
+    out << docJson.toJson() << "\n";
+    file.close();
 }
 
 void ControlPanel::openJsonFile(QString jsonPath)
 {
+    _valuesListModel->clearList();
+
     qDebug() << "open" << jsonPath;
     QFile file(jsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -61,9 +88,12 @@ void ControlPanel::parseJson(QJsonObject jsonObject)
                             (checkType(valJsonObject.value("type").toString())
                              ? valueTypesMap.key(valJsonObject.value("type").toString())
                              : ValueObject::ValueType::EnumType),
-                            valJsonObject.value("value"),
-                            this);
+                            this,
+                            valJsonObject.value("value")
+                            );
                 newValue->setType(valJsonObject.value("type").toString());
+
+                qDebug() << newValue->type();
 
                 if(valJsonObject.value("isEditable") != QJsonValue::Undefined)
                     newValue->setIsEditable(valJsonObject.value("isEditable").toBool());
@@ -82,9 +112,6 @@ void ControlPanel::parseJson(QJsonObject jsonObject)
         }
     }
     qDebug() << _valuesListModel->rowCount(QModelIndex());
-    qDebug() << _customEnumsMap.values();
-    qDebug() << _customEnumsMap.keys();
-    qDebug() << listOfEnums();
 //    qDebug() << valuesListOfEnum(*listOfEnums().begin());
 }
 

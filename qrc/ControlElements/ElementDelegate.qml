@@ -7,6 +7,9 @@ import ValueObjectsModule 1.0
 
 ItemDelegate{
     id: delegate
+
+    // TODO dynamic creation with createQmlObject()
+
     property int fontSize: 15
     property bool editable: isEditableRole
     property bool canBeNull: isNullRole
@@ -15,6 +18,7 @@ ItemDelegate{
 
     signal nullValue()
     signal deviceChanged()
+    signal deleteValue()
 
     property var textColor: editable
                             ? "white"
@@ -79,7 +83,11 @@ ItemDelegate{
                     currentIndex: typeCodeRole
                     enabled: isEditableRole
                     model: valueTypes
-                    onActivated: typeCodeRole = currentIndex
+                    onActivated: {
+                        enumCombo.currentIndex = 1
+                        valueRole = ""
+                        typeCodeRole = currentIndex
+                    }
                 }
 
 
@@ -98,7 +106,10 @@ ItemDelegate{
                     currentIndex: panel.listOfEnums().indexOf(typeRole)
                     model: panel.listOfEnums()
                     enabled: isEditableRole
-                    onActivated: typeRole = currentIndex
+                    onAccepted: {
+                        enumValueCombo.currentIndex = 1
+                        typeRole = currentText
+                    }
                 }
 
                 Label{
@@ -188,8 +199,6 @@ ItemDelegate{
                 {
                     canBeNull = !canBeNull
                     isNullRole = canBeNull
-                    console.log(panel.listOfEnums)
-                    console.log(panel.valuesListOfEnum())
                 }
             }
 
@@ -207,6 +216,18 @@ ItemDelegate{
                     enableForCombos()
                     isEditableRole = editable
                 }
+            }
+            ToolButton{
+                Layout.alignment: Qt.AlignRight
+                scale: mainWindow.iconScaler
+                icon.source: "/Icons/delete"
+                icon.color: "red"
+                width:implicitWidth
+                onClicked:
+                {
+                    deleteValue()
+                }
+
             }
         }
         Label{
@@ -226,6 +247,7 @@ ItemDelegate{
             }
         }
     }
+
     function enableForCombos(){
         deviceCombo.enabled = editable
         typeCombo.enabled = editable
