@@ -41,7 +41,17 @@ void ValueObject::setTypeCode(uint newValue)
 {
     if(newValue != _typeCode){
         _typeCode = newValue;
-        emit typeChanged(_typeCode);
+        if(_typeCode != ValueType::EnumType)
+            setType(getType(_typeCode));
+        emit typeCodeChanged(_typeCode);
+    }
+}
+
+void ValueObject::setType(QString newValue)
+{
+    if(newValue != _type){
+        _type = newValue;
+        emit typeCodeChanged(_typeCode);
     }
 }
 
@@ -52,7 +62,8 @@ void ValueObject::setValue(QJsonValue newValue)
         qDebug() << "new Value" << newValue;
         _value = newValue;
         emit valueChanged(_value);
-    }}
+    }
+}
 
 void ValueObject::setIsEditable(bool newValue)
 {
@@ -75,20 +86,14 @@ void ValueObject::setDesc(QString newValue)
         emit descChanged(_desc);
     }
 }
-void ValueObject::setDefault(QJsonValue newValue)
+void ValueObject::setDefaultValue(QJsonValue newValue)
 {
-    valueConversion(newValue);
-}
-
-QString ValueObject::typeString() const
-{
-    return getType(_typeCode);
-}
-
-
-void ValueObject::valueConversion(QJsonValue value)
-{
-
+    qDebug() << _defaultValue << newValue;
+    if(newValue != _defaultValue){
+        qDebug() << "new Value" << newValue;
+        _defaultValue = newValue;
+        emit defaultValueChanged(_defaultValue);
+    }
 }
 
 
@@ -123,7 +128,7 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
     case static_cast<int>(Roles::NameRole):
         return _valueObjectsList.at(row)->name();
     case static_cast<int>(Roles::TypeRole):
-        return _valueObjectsList.at(row)->typeString();
+        return _valueObjectsList.at(row)->type();
     case static_cast<int>(Roles::TypeCodeRole):
         return _valueObjectsList.at(row)->typeCode();
     case static_cast<int>(Roles::ValueRole):
@@ -135,6 +140,9 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
         return _valueObjectsList.at(row)->isNull();
     case static_cast<int>(Roles::DescRole):
         return _valueObjectsList.at(row)->desc();
+    case static_cast<int>(Roles::DefaultValueRole):
+        return convertFromJsonValue(_valueObjectsList.at(row)->typeCode(),
+                                _valueObjectsList.at(row)->defaultValue());
     default:
         return QVariant();
     }
@@ -165,12 +173,20 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         valueObject->setTypeCode(uint(value.toInt()));
         break;
 
+    case TypeRole:
+        valueObject->setType(value.toString());
+        break;
+
     case IsEditableRole:
         valueObject->setIsEditable(value.toBool());
         break;
 
     case IsNullRole:
         valueObject->setIsNull(value.toBool());
+        break;
+
+    case DefaultValueRole:
+        valueObject->setDefaultValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
     case DescRole:
@@ -199,6 +215,7 @@ QHash<int, QByteArray> ValuesListModel::roleNames() const
     roles[static_cast<int>(Roles::IsEditableRole)] = "isEditableRole";
     roles[static_cast<int>(Roles::IsNullRole)] = "isNullRole";
     roles[static_cast<int>(Roles::DescRole)] = "descRole";
+    roles[static_cast<int>(Roles::DefaultValueRole)] = "defaultValueRole";
     return roles;
 }
 
@@ -258,8 +275,12 @@ QJsonValue ValuesListModel::convertToJsonValue(uint type, QVariant qvar) const
     case ValueObject::ValueType::GnssDigitType:
     case ValueObject::ValueType::EnumType:
     case ValueObject::ValueType::NullType:
-        return QJsonObject(QJsonDocument::fromJson(
-                               qvar.toByteArray()).object());
+    {
+        return QJsonValue::fromVariant(qvar);
+    }
+
+    default:
+        return QJsonValue();
     }
 }
 

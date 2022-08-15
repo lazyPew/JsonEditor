@@ -5,6 +5,7 @@
 #include "QQmlEngine"
 #include <QDebug>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>
 
@@ -16,6 +17,11 @@ ControlPanel::ControlPanel(QObject *parent)
     registerQmlTypes();
     connect(this, &ControlPanel::shutdownNow,
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
+}
+
+void ControlPanel::addValueObject()
+{
+
 }
 
 void ControlPanel::saveToJsonFile(QString newJsonPath)
@@ -41,25 +47,32 @@ void ControlPanel::openJsonFile(QString jsonPath)
 void ControlPanel::parseJson(QJsonObject jsonObject)
 {
     for(QString devName : jsonObject.keys()){
-        if(!devName.contains("_enum")){
+        QJsonObject devObject = jsonObject.value(devName).toObject();
+        if(devName.contains("_enum")){
+            _customEnumsMap.insert(devName,devObject.value("value").toArray().toVariantList());
+        }
+        else{
             _listOfDevices.append(devName);
-            QJsonObject devObject = jsonObject.value(devName).toObject();
             for(QString valName : devObject.keys()){
                 QJsonObject valJsonObject = devObject.value(valName).toObject();
-                {
-                    ValueObject* newValue =
-                            new ValueObject(
-                                devName,
-                                valName,
-                                valueTypesMap.key(valJsonObject.value("type").toString()),
-                                valJsonObject.value("value"),
-                                this);
-                    _valuesListModel->addValueObject(newValue);
-                }
+                ValueObject* newValue = new ValueObject(
+                            devName,
+                            valName,
+                            (checkType(valJsonObject.value("type").toString())
+                             ? valueTypesMap.key(valJsonObject.value("type").toString())
+                             : ValueObject::ValueType::EnumType),
+                            valJsonObject.value("value"),
+                            this);
+                newValue->setType(valJsonObject.value("type").toString());
+                _valuesListModel->addValueObject(newValue);
             }
         }
     }
     qDebug() << _valuesListModel->rowCount(QModelIndex());
+    qDebug() << _customEnumsMap.values();
+    qDebug() << _customEnumsMap.keys();
+    qDebug() << listOfEnums();
+//    qDebug() << valuesListOfEnum(*listOfEnums().begin());
 }
 
 

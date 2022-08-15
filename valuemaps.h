@@ -4,8 +4,6 @@
 #include <valueslistmodel.h>
 //extern class ValueObject;
 
-//static const QMap<QString, ValueObject::ValueType> valueTypesMap = {
-
 static const QMap<uint, QString> valueTypesMap = {
     {ValueObject::ValueType::IpStringType, "ipstring" },
     {ValueObject::ValueType::IpDigitType, "ipdigit" },
@@ -22,6 +20,7 @@ static const QMap<uint, QString> valueTypesMap = {
 
 static QStringList getStringTypes() { return valueTypesMap.values(); }
 static QString getType(uint typeCode) { return valueTypesMap.value(typeCode); }
+static bool checkType(QString typeStr) { return valueTypesMap.values().contains(typeStr); }
 
 
 #endif // VALUEMAPS_H

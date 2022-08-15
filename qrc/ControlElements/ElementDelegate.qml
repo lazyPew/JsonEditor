@@ -38,6 +38,7 @@ ItemDelegate{
                 }
                 ComboBox{
                     id:deviceCombo
+                    Layout.fillWidth:true
                     displayText: deviceRole
                     model: panel.listOfDevices
                     onActivated: {
@@ -57,6 +58,7 @@ ItemDelegate{
 
                 TextField{
                     text: nameRole
+                    Layout.fillWidth:true
                     enabled: editable
                     color: textColor
                     onEditingFinished: {
@@ -73,10 +75,30 @@ ItemDelegate{
 
                 ComboBox{
                     id:typeCombo
+                    Layout.fillWidth:true
                     currentIndex: typeCodeRole
                     enabled: isEditableRole
                     model: valueTypes
-                    onCurrentIndexChanged: typeCodeRole = currentIndex
+                    onActivated: typeCodeRole = currentIndex
+                }
+
+
+                Label{
+                    text: "Тип Enum : "
+                    visible: typeCombo.currentIndex === ValueObject.EnumType
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                ComboBox{
+                    id:enumCombo
+                    visible: typeCombo.currentIndex === ValueObject.EnumType
+                    Layout.fillWidth:true
+                    currentIndex: panel.listOfEnums().indexOf(typeRole)
+                    model: panel.listOfEnums()
+                    enabled: isEditableRole
+                    onActivated: typeRole = currentIndex
                 }
 
                 Label{
@@ -86,20 +108,69 @@ ItemDelegate{
                     font.pixelSize: fontSize
                 }
 
-                TextField{
-                    id: valueText
-                    color: textColor
-                    text: JSON.stringify(valueRole)
-                    enabled: editable
-                    onEditingFinished: {
-                        if(!canBeNull && !text.length){
-                            text = JSON.stringify(valueRole)
-                            nullValue()
-                        }else
-                            valueRole = text
+                RowLayout{
+                    Layout.fillWidth:true
+                    TextField{
+                        id: valueText
+                        Layout.fillWidth:true
+                        visible: typeCombo.currentIndex !== ValueObject.EnumType
+                        color: textColor
+                        text: JSON.stringify(valueRole)
+                        onEditingFinished: {
+                            if(!canBeNull && !text.length){
+                                text = JSON.stringify(valueRole)
+                                nullValue()
+                            }else
+                                valueRole = text
+                        }
+                    }
+                    ComboBox{
+                        id: enumValueCombo
+                        visible: typeCombo.currentIndex === ValueObject.EnumType
+                        Layout.fillWidth:true
+                        model: panel.valuesListOfEnum(enumCombo.currentText)
+                        displayText: JSON.stringify(valueRole)
+                        onActivated: {
+                            valueRole = JSON.parse(currentText)
+                            displayText = JSON.stringify(valueRole)
+                        }
+
                     }
                 }
 
+
+                Label{
+                    text: "Значение по умолчанию : "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                RowLayout{
+                    Layout.fillWidth:true
+                    TextField{
+                        id: defaultText
+                        Layout.fillWidth:true
+                        visible: typeCombo.currentIndex !== ValueObject.EnumType
+                        color: textColor
+                        text: JSON.stringify(defaultRole)
+                        onEditingFinished: {
+                            defaultRole = text
+                        }
+                    }
+                    ComboBox{
+                        id: defaultCombo
+                        visible: typeCombo.currentIndex === ValueObject.EnumType
+                        Layout.fillWidth:true
+                        model: panel.valuesListOfEnum(enumCombo.currentText)
+                        displayText: JSON.stringify(defaultRole)
+                        onActivated: {
+                            defaultRole = JSON.parse(currentText)
+                            displayText = JSON.stringify(defaultRole)
+                        }
+
+                    }
+                }
             }
             Item{
                 Layout.fillWidth: true
@@ -117,6 +188,8 @@ ItemDelegate{
                 {
                     canBeNull = !canBeNull
                     isNullRole = canBeNull
+                    console.log(panel.listOfEnums)
+                    console.log(panel.valuesListOfEnum())
                 }
             }
 
@@ -131,8 +204,7 @@ ItemDelegate{
                 onClicked:
                 {
                     editable = !editable
-                    deviceCombo.enabled = editable
-                    typeCombo.enabled = editable
+                    enableForCombos()
                     isEditableRole = editable
                 }
             }
@@ -146,12 +218,19 @@ ItemDelegate{
 
         TextArea{
             wrapMode: TextEdit.Wrap
-
+            enabled: editable
             Layout.fillWidth:true
             clip: true
             onEditingFinished: {
                 descRole = text
             }
         }
+    }
+    function enableForCombos(){
+        deviceCombo.enabled = editable
+        typeCombo.enabled = editable
+        enumCombo.enabled = editable
+        enumValueCombo.enabled = editable
+
     }
 }

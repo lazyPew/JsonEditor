@@ -16,13 +16,21 @@ class ControlPanel : public QObject
     Q_PROPERTY(QStringList listOfDevices
                READ listOfDevices
                CONSTANT)
+//    Q_PROPERTY(QStringList listOfEnums
+//               READ listOfEnums
+//               CONSTANT)
+
 public:
     ControlPanel(QObject *parent = nullptr);
 
 public slots:
-    ValuesListModel* valuesListModel() const{ return _valuesListModel; }
-    QStringList listOfTypes() const         { return getStringTypes(); }
-    QStringList listOfDevices() const       { return _listOfDevices; }
+    ValuesListModel* valuesListModel() const                { return _valuesListModel; }
+    QStringList listOfTypes() const                         { return getStringTypes(); }
+    QStringList listOfDevices() const                       { return _listOfDevices; }
+    QStringList listOfEnums() const                         { return _customEnumsMap.keys(); }
+    QVariantList valuesListOfEnum(QString enumString) const { return _customEnumsMap.value(enumString); }
+
+    void addValueObject();
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
@@ -41,6 +49,8 @@ private:
     ValuesListModel* _valuesListModel;
 
     QStringList _listOfDevices;
+    QMap<QString, QVariantList> _customEnumsMap;
+
 };
 
 #endif // CONTROLPANEL_H

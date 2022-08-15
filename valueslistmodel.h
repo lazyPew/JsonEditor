@@ -32,34 +32,36 @@ public:
                 QObject *parent = nullptr
             );
 public slots:
-    QString device() const      { return _device; }
-    QString name() const        { return _name; }
-    uint typeCode() const       { return _typeCode; }
-    QJsonValue value() const    { return _value; }
-    bool isEditable() const     { return _isEditable; }
-    bool isNull() const         { return _isNull; }
-    QString desc() const        { return _desc; }
+    QString device() const              { return _device; }
+    QString name() const                { return _name; }
+    uint typeCode() const               { return _typeCode; }
+    QString type() const                { return _type; }
+    QJsonValue value() const            { return _value; }
+    bool isEditable() const             { return _isEditable; }
+    bool isNull() const                 { return _isNull; }
+    QJsonValue defaultValue() const     { return _defaultValue; }
+    QString desc() const                { return _desc; }
 
     void setDevice(QString newValue);
     void setName(QString newValue);
     void setTypeCode(uint newValue);
+    void setType(QString newValue);
     void setValue(QJsonValue newValue);
     void setIsEditable(bool newValue);
     void setIsNull(bool newValue);
+    void setDefaultValue(QJsonValue newValue);
     void setDesc(QString newValue);
-    void setDefault(QJsonValue newValue);
-
-    QString typeString() const;
 
 signals:
     void deviceChanged(QString);
     void nameChanged(QString);
-    void typeChanged(uint);
+    void typeCodeChanged(uint);
+    void typeChanged(QString);
     void valueChanged(QJsonValue);
     void isEditableChanged(bool);
     void isNullChanged(bool);
+    void defaultValueChanged(QJsonValue);
     void descChanged(QString);
-    void defaultChanged(QJsonValue);
 
 private:
     void valueConversion(QJsonValue);
@@ -68,11 +70,12 @@ private:
     QString _device;
     QString _name;
     uint _typeCode;
+    QString _type;
     QJsonValue _value;
     bool _isEditable = true;
     bool _isNull = true;
     QString _desc = "";
-    QJsonValue _default = QJsonValue::Null;
+    QJsonValue _defaultValue = QJsonValue::Null;
 };
 
 class ValuesListModel : public QAbstractListModel
@@ -91,7 +94,7 @@ public:
         IsEditableRole,
         IsNullRole,
         DescRole,
-        DefaultRole
+        DefaultValueRole
     };
     void addValueObject(ValueObject*);
 
