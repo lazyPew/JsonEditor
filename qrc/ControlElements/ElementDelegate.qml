@@ -153,9 +153,9 @@ ItemDelegate{
                         Layout.fillWidth:true
                         visible: typeCombo.currentIndex !== ValueObject.EnumType
                         color: textColor
-                        text: JSON.stringify(defaultRole)
+                        text: JSON.stringify(defaultValueRole)
                         onEditingFinished: {
-                            defaultRole = text
+                            defaultValueRole = text
                         }
                     }
                     ComboBox{
@@ -163,10 +163,10 @@ ItemDelegate{
                         visible: typeCombo.currentIndex === ValueObject.EnumType
                         Layout.fillWidth:true
                         model: panel.valuesListOfEnum(enumCombo.currentText)
-                        displayText: JSON.stringify(defaultRole)
+                        displayText: JSON.stringify(defaultValueRole)
                         onActivated: {
-                            defaultRole = JSON.parse(currentText)
-                            displayText = JSON.stringify(defaultRole)
+                            defaultValueRole = JSON.parse(currentText)
+                            displayText = JSON.stringify(defaultValueRole)
                         }
 
                     }

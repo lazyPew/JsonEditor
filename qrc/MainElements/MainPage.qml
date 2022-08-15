@@ -8,14 +8,10 @@ import "../ControlElements"
 Page {
     id: root
 
-//    Flickable{
-//        id:mainColumn
-//        anchors.fill: parent
     ListView{
         id: valuesView
         anchors.fill: parent
-
-    //            clip: true
+        clip: true
         spacing: 20
 
         Layout.margins: 4

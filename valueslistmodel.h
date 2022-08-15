@@ -93,8 +93,8 @@ public:
         ValueRole,
         IsEditableRole,
         IsNullRole,
-        DescRole,
-        DefaultValueRole
+        DefaultValueRole,
+        DescRole
     };
     void addValueObject(ValueObject*);
 

@@ -138,11 +138,11 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
         return _valueObjectsList.at(row)->isEditable();
     case static_cast<int>(Roles::IsNullRole):
         return _valueObjectsList.at(row)->isNull();
-    case static_cast<int>(Roles::DescRole):
-        return _valueObjectsList.at(row)->desc();
     case static_cast<int>(Roles::DefaultValueRole):
         return convertFromJsonValue(_valueObjectsList.at(row)->typeCode(),
                                 _valueObjectsList.at(row)->defaultValue());
+    case static_cast<int>(Roles::DescRole):
+        return _valueObjectsList.at(row)->desc();
     default:
         return QVariant();
     }
@@ -153,8 +153,6 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
     ValueObject* valueObject = _valueObjectsList[index.row()];
 
     switch(role){
-//    DeviceRole
-//    ValueRole,
 
     case DeviceRole:
         qDebug() << "new Value" ;
@@ -274,11 +272,9 @@ QJsonValue ValuesListModel::convertToJsonValue(uint type, QVariant qvar) const
                               qvar.toByteArray()).array());
     case ValueObject::ValueType::GnssDigitType:
     case ValueObject::ValueType::EnumType:
-    case ValueObject::ValueType::NullType:
-    {
         return QJsonValue::fromVariant(qvar);
-    }
-
+    case ValueObject::ValueType::NullType:
+        return QJsonValue::Null;
     default:
         return QJsonValue();
     }

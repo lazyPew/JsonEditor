@@ -64,6 +64,19 @@ void ControlPanel::parseJson(QJsonObject jsonObject)
                             valJsonObject.value("value"),
                             this);
                 newValue->setType(valJsonObject.value("type").toString());
+
+                if(valJsonObject.value("isEditable") != QJsonValue::Undefined)
+                    newValue->setIsEditable(valJsonObject.value("isEditable").toBool());
+
+                if(valJsonObject.value("isNull") != QJsonValue::Undefined)
+                    newValue->setIsNull(valJsonObject.value("isNull").toBool());
+
+                if(valJsonObject.value("default") != QJsonValue::Undefined)
+                    newValue->setDefaultValue(valJsonObject.value("default"));
+
+                if(valJsonObject.value("desc") != QJsonValue::Undefined)
+                    newValue->setDesc(valJsonObject.value("desc").toString());
+
                 _valuesListModel->addValueObject(newValue);
             }
         }

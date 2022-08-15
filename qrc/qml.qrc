@@ -11,6 +11,7 @@
         <file>ControlElements/ElementDelegate.qml</file>
         <file>Popups/SavePopup.qml</file>
         <file>Popups/NewValuePopup.qml</file>
+        <file>MainElements/EnumPage.qml</file>
     </qresource>
     <qresource prefix="/Icons">
         <file alias="exit">Icons/exit.png</file>
