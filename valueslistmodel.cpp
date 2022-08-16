@@ -36,7 +36,7 @@ QJsonObject ValueObject::getJson()
     valueJson.insert("isNull", isNull());
     valueJson.insert("default", defaultValue());
     valueJson.insert("desc", desc());
-    qDebug() << valueJson;
+//    qDebug() << valueJson;
     return valueJson;
 }
 

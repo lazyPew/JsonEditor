@@ -38,20 +38,37 @@ void ControlPanel::removeValueObject(int index)
     _valuesListModel->valueObjectRemoving(index);
 }
 
+void ControlPanel::addCustomEnum()
+{
+
+}
+
 void ControlPanel::saveToJsonFile(QString newJsonPath)
 {
     if (newJsonPath.isEmpty())
          newJsonPath = (QCoreApplication::applicationDirPath()).append("/" + QDateTime::currentDateTime().toString("MMdd_HHmmss") + ".json");
     qDebug() << "save to" << newJsonPath;
     QJsonObject objForJsonDoc = _valuesListModel->createJson(_listOfDevices);
-    QJsonDocument docJson(objForJsonDoc);
+    enumsToJson(objForJsonDoc);
 
+    QJsonDocument docJson(objForJsonDoc);
     QFile file(newJsonPath);
     if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
         return;
     QTextStream out(&file);
     out << docJson.toJson() << "\n";
     file.close();
+}
+
+
+void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc)
+{
+    for(QString key : _customEnumsMap.keys()){
+        QJsonObject enumJson;
+        enumJson.insert("type", "enum");
+        enumJson.insert("value",QJsonArray::fromVariantList(_customEnumsMap.value(key)));
+        objForJsonDoc.insert(key,enumJson);
+    }
 }
 
 void ControlPanel::openJsonFile(QString jsonPath)
@@ -71,6 +88,7 @@ void ControlPanel::openJsonFile(QString jsonPath)
     parseJson(jsonDoc.object());
 
 }
+
 void ControlPanel::parseJson(QJsonObject jsonObject)
 {
     for(QString devName : jsonObject.keys()){

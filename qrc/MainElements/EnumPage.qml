@@ -34,9 +34,10 @@ Page {
         anchors.fill: parent
         spacing: 20
         model:panel.listOfEnums()
-        delegate: Label{
+        delegate: ItemDelegate{
             text: modelData
         }
+
     }
     function addEnum(){
         panel.addEmptyValueObject()

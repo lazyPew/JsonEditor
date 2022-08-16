@@ -33,6 +33,8 @@ public slots:
     void addEmptyValueObject();
     void removeValueObject(int index);
 
+    void addCustomEnum();
+
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
 
@@ -45,6 +47,7 @@ private:
     void shutdown(int returnCode);
     void parseJson(QJsonObject jsonObject);
     void registerQmlTypes();
+    void enumsToJson(QJsonObject&);
 
 private:
     ValuesListModel* _valuesListModel;
