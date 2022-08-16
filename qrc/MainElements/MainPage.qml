@@ -8,19 +8,28 @@ import "../ControlElements"
 Page {
     id: root
 
+    signal goToEnum()
+
     header: RowLayout{
         Layout.fillWidth: true
         height: 50
         ToolButton{
-            id: exitButton
+            id: addValueButton
             Layout.fillWidth: true
             Layout.preferredHeight: 43
             text: "Добавить пустое значение"
-            scale: mainWindow.iconScaler
             icon.source: "/Icons/add"
             onClicked: addValue()
         }
+        ToolButton{
+            id: enumutton
+            Layout.fillWidth: true
+            Layout.preferredHeight: 43
+            text: "enum ->"
+            onClicked: goToEnum()
+        }
     }
+
     ListView{
         id: valuesView
         anchors.fill: parent

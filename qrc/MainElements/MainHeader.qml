@@ -35,7 +35,7 @@ ToolBar {
             scale: mainWindow.iconScaler
             icon.source: "/Icons/open"
             font.pixelSize: root.fontSize
-            onClicked: openFilePopup.open()//panel.openJsonFile(":/testJson")
+            onClicked: openFilePopup.open()
         }
     }
 }

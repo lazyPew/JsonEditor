@@ -19,8 +19,14 @@ ApplicationWindow {
 
     MainPage{
         id: mainPage
+        onGoToEnum: stackView.changeToPage(enumPage)
     }
 
+    EnumPage{
+        id: enumPage
+        onGoToMain: stackView.changeToPage(mainPage)
+
+    }
     StackView {
         id: stackView
         anchors.fill: parent
