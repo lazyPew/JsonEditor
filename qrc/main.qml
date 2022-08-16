@@ -17,35 +17,26 @@ ApplicationWindow {
         id: mainHeader
     }
 
-    MainPage{
-        id: mainPage
-        onGoToEnum: stackView.changeToPage(enumPage)
-    }
-
-    EnumPage{
-        id: enumPage
-        onGoToMain: stackView.changeToPage(mainPage)
-
-    }
-    StackView {
+    SwipeView {
         id: stackView
         anchors.fill: parent
-        initialItem: mainPage
+        currentIndex: 1
 
-        function changeToPage(item){
-            while (stackView.currentItem != mainPage){
-                stackView.pop()
-            }
-            if (item !== currentItem){
-                stackView.push(item)
-            }
+        DevicePage{
+            id: devicePage
+            onGoToMain: stackView.currentIndex = 1
         }
 
-        clip: true
-        onCurrentItemChanged: {
-            if (stackView.depth > 0) {
-                currentItem.forceActiveFocus()
-            }
+        MainPage{
+            id: mainPage
+            onGoToEnum: stackView.currentIndex = 2
+            onGoToDevice: stackView.currentIndex = 0
+        }
+
+        EnumPage{
+            id: enumPage
+            onGoToMain: stackView.currentIndex = 1
+
         }
     }
 

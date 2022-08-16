@@ -15,10 +15,7 @@ class ControlPanel : public QObject
                CONSTANT)
     Q_PROPERTY(QStringList listOfDevices
                READ listOfDevices
-               CONSTANT)
-//    Q_PROPERTY(QStringList listOfEnums
-//               READ listOfEnums
-//               CONSTANT)
+               NOTIFY listOfDevicesChanged)
 
 public:
     ControlPanel(QObject *parent = nullptr);
@@ -30,10 +27,14 @@ public slots:
     QStringList listOfEnums() const                         { return _customEnumsMap.keys(); }
     QVariantList valuesListOfEnum(QString enumString) const { return _customEnumsMap.value(enumString); }
 
+    void addDevice(QString newDevice);
+    void removeDevice(int index);
+
     void addEmptyValueObject();
     void removeValueObject(int index);
 
     void addCustomEnum();
+    void updateCustomEnum(QString enumName, QVariantList list);
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
@@ -41,6 +42,7 @@ public slots:
     void turnOff();
 
 signals:
+    void listOfDevicesChanged(QStringList);
     void shutdownNow(int returnCode);
 
 private:

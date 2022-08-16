@@ -21,6 +21,17 @@ ControlPanel::ControlPanel(QObject *parent)
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
 }
 
+void ControlPanel::addDevice(QString newDevice)
+{
+    _listOfDevices.append(newDevice);
+    emit listOfDevicesChanged(_listOfDevices);
+}
+void ControlPanel::removeDevice(int index)
+{
+    _listOfDevices.removeAt(index);
+    emit listOfDevicesChanged(_listOfDevices);
+}
+
 void ControlPanel::addEmptyValueObject()
 {
     ValueObject* newValue = new ValueObject(
@@ -41,6 +52,11 @@ void ControlPanel::removeValueObject(int index)
 void ControlPanel::addCustomEnum()
 {
 
+}
+
+void ControlPanel::updateCustomEnum(QString enumName, QVariantList list)
+{
+    _customEnumsMap[enumName] = list;
 }
 
 void ControlPanel::saveToJsonFile(QString newJsonPath)

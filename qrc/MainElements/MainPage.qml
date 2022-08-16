@@ -9,10 +9,19 @@ Page {
     id: root
 
     signal goToEnum()
+    signal goToDevice()
 
     header: RowLayout{
         Layout.fillWidth: true
         height: 50
+        ToolButton{
+            id: deviceButton
+            Layout.fillWidth: true
+            Layout.preferredHeight: 43
+            text: "<- device"
+            onClicked: goToDevice()
+        }
+        ToolSeparator{}
         ToolButton{
             id: addValueButton
             Layout.fillWidth: true
@@ -21,8 +30,9 @@ Page {
             icon.source: "/Icons/add"
             onClicked: addValue()
         }
+        ToolSeparator{}
         ToolButton{
-            id: enumutton
+            id: enumButton
             Layout.fillWidth: true
             Layout.preferredHeight: 43
             text: "enum ->"
