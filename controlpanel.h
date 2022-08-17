@@ -23,7 +23,7 @@ class ControlPanel : public QObject
                NOTIFY listOfEnumsChanged)
 
 public:
-    ControlPanel(QObject *parent = nullptr);
+    ControlPanel(QStringList args, QObject *parent = nullptr);
 
 public slots:
     ValuesListModel* valuesListModel() const                { return _valuesListModel; }
@@ -43,7 +43,7 @@ public slots:
     void removeCustomEnum(QString enumName);
 
     void saveToJsonFile(QString newJsonPath);
-    void openJsonFile(QString jsonPath = ":/test2");
+    void openJsonFile(QString jsonPath);
 
     void turnOff();
 
@@ -55,6 +55,8 @@ signals:
 private:
     void shutdown(int returnCode);
     void registerQmlTypes();
+
+    QString checkArguments(QStringList args);
 
     void parseJson(QJsonObject jsonObject);
     void enumsToJson(QJsonObject&);

@@ -11,11 +11,14 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-ControlPanel::ControlPanel(QObject *parent)
+ControlPanel::ControlPanel(QStringList args, QObject *parent)
     : QObject(parent)
     , _valuesListModel{ new ValuesListModel(this) }
 {
-    openJsonFile();
+    Q_UNUSED(parent);
+    QString jsonPath = checkArguments(args);
+
+    openJsonFile(jsonPath);
     registerQmlTypes();
     connect(this, &ControlPanel::shutdownNow,
             this, &ControlPanel::shutdown, Qt::QueuedConnection);
@@ -89,7 +92,6 @@ void ControlPanel::saveToJsonFile(QString newJsonPath){
     file.close();
 }
 
-
 void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc){
     for(QString key : _customEnumsMap.keys()){
         QJsonObject enumJson;
@@ -152,8 +154,8 @@ void ControlPanel::parseJson(QJsonObject jsonObject){
             }
         }
     }
+
     qDebug() << _valuesListModel->rowCount(QModelIndex());
-//    qDebug() << valuesListOfEnum(*listOfEnums().begin());
 }
 
 
@@ -168,6 +170,25 @@ void ControlPanel::registerQmlTypes() {
         qRegisterMetaType<ValueObject::ValueType>("ValueType");
         registered = true;
     }
+}
+
+QString ControlPanel::checkArguments(QStringList args)
+{
+    QString jsonPath;
+    if(args.size() <= 1){
+        qDebug() << "No additional arguments have been given. Using test JSON file.";
+        jsonPath = ":/test2";
+    }
+    else{
+        qDebug() << "Argument for JSON file have been given, checking file " + args.at(1) + "...";
+        if(QFile(args.at(1)).exists())
+            jsonPath = args.at(1);
+        else{
+            qDebug() << "No such file. Using test JSON file.";
+            jsonPath = ":/test2";
+        }
+    }
+    return jsonPath;
 }
 
 //===============================================================================

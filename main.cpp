@@ -1,4 +1,5 @@
 #include <QGuiApplication>
+#include <QCoreApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
@@ -11,7 +12,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    ControlPanel* panel = new ControlPanel();
+    ControlPanel* panel = new ControlPanel(QCoreApplication::arguments());
 
     engine.rootContext()->setContextProperty("panel", panel);
     engine.rootContext()->setContextProperty("valueTypes", QVariant::fromValue(getStringTypes()));
