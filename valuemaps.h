@@ -1,8 +1,8 @@
 #ifndef VALUEMAPS_H
 #define VALUEMAPS_H
 
-#include <valueslistmodel.h>
-//extern class ValueObject;
+#include <valueobject.h>
+#include <QMap>
 
 static const QMap<uint, QString> valueTypesMap = {
     {ValueObject::ValueType::IpStringType, "ipstring" },
@@ -17,6 +17,8 @@ static const QMap<uint, QString> valueTypesMap = {
     {ValueObject::ValueType::ArrayType, "array" },
     {ValueObject::ValueType::NullType, "null" }
 };
+
+
 
 static QStringList getStringTypes() { return valueTypesMap.values(); }
 static QString getType(uint typeCode) { return valueTypesMap.value(typeCode); }

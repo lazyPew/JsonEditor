@@ -22,11 +22,8 @@
         <file alias="unlock">Icons/unlock.png</file>
         <file alias="open">Icons/open.png</file>
         <file alias="delete">Icons/delete2.png</file>
-        <file alias="delete2">Icons/delete.png</file>
         <file alias="add">Icons/add.png</file>
-        <file alias="null">Icons/null.png</file>
-        <file alias="nonull">Icons/nonull.png</file>
-        <file alias="null2">Icons/null2.png</file>
-        <file alias="nonull2">Icons/nonull2.png</file>
+        <file alias="null">Icons/null2.png</file>
+        <file alias="nonull">Icons/nonull2.png</file>
     </qresource>
 </RCC>

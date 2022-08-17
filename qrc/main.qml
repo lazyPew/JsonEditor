@@ -48,14 +48,16 @@ ApplicationWindow {
         id: newEnumPopup
     }
 
+    OpenFilePopup{
+        id: openFilePopup
+    }
+
+    SavePopup{
+        id: savePopup
+    }
+
     TurnOffPopup{
         id: turnOffPopup
     }
 
-    OpenFilePopup{
-        id: openFilePopup
-    }
-    SavePopup{
-        id: savePopup
-    }
 }

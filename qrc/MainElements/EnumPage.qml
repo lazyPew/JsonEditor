@@ -88,14 +88,15 @@ Page {
         x: (mainWindow.width - width ) / 2
         y: (mainWindow.contentItem.height - height) / 2
         width: mainWindow.width / 2
+        height: contentColumn.implicitHeight
         modal: true
         focus: true
         closePolicy: Popup.NoAutoClose
 
         property string enumName
         contentItem: ColumnLayout{
+            id: contentColumn
             Layout.fillWidth: true
-            height: implicitHeight
             Label{
                 Layout.fillWidth: true
                 font.pixelSize: 15
@@ -105,6 +106,7 @@ Page {
                 elide: Text.ElideMiddle
                 text: "При удалении данного перечисления будут также удалены все связанные с ним значения.\nПодтвердить удаление?"
             }
+
             RowLayout {
                 id: buttonsRow
                 Layout.alignment: Qt.AlignHCenter
@@ -118,6 +120,7 @@ Page {
                         removeEnumPopup.close();
                     }
                 }
+
                 Button {
                     text: "ОТМЕНА"
                     Layout.preferredWidth: 150

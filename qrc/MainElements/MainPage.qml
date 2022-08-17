@@ -18,10 +18,12 @@ Page {
             id: deviceButton
             Layout.fillWidth: true
             Layout.preferredHeight: 43
-            text: "<- device"
+            text: "<- Устройства"
             onClicked: goToDevice()
         }
+
         ToolSeparator{}
+
         ToolButton{
             id: addValueButton
             Layout.fillWidth: true
@@ -30,7 +32,9 @@ Page {
             icon.source: "/Icons/add"
             onClicked: addValue()
         }
+
         ToolSeparator{}
+
         ToolButton{
             id: enumButton
             Layout.fillWidth: true
@@ -71,7 +75,6 @@ Page {
             ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
         section.delegate: Control{
             width: parent.width - scroll.width
-
             topPadding: 5
             bottomPadding: 5
 
@@ -91,15 +94,17 @@ Page {
         }
     }
     Component.onCompleted: valuesView.model = panel.valuesListModel
-    //    }
+
     Popup{
         id: nullIsNotAllowedPopup
         x: (mainWindow.width - width ) / 2
         y: (mainWindow.contentItem.height - height) / 2
         width: mainWindow.width / 2
+        height: contentColumn.implicitHeight
         modal: true
         focus: true
         contentItem: ColumnLayout{
+            id:contentColumn
             Layout.fillWidth: true
             Label{
                 Layout.fillWidth: true
@@ -119,12 +124,63 @@ Page {
             }
         }
     }
+
+    Popup{
+        id: removeValuePopup
+        x: (mainWindow.width - width ) / 2
+        y: (mainWindow.contentItem.height - height) / 2
+        width: mainWindow.width / 2
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+
+        property int valueIndex
+        contentItem: ColumnLayout{
+            Layout.fillWidth: true
+            height: implicitHeight
+            Label{
+                Layout.fillWidth: true
+                font.pixelSize: 15
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideMiddle
+                text: "Удалить значение?"
+            }
+            RowLayout {
+                id: buttonsRow
+                Layout.alignment: Qt.AlignHCenter
+
+                Button {
+                    text: "ПОДТВЕРДИТЬ"
+                    Layout.preferredWidth: 150
+                    font.pixelSize: 15
+                    onClicked: {
+                        panel.removeValueObject(removeValuePopup.valueIndex);
+                        valuesView.forceLayout()
+                        removeValuePopup.close();
+                    }
+                }
+
+                Button {
+                    text: "ОТМЕНА"
+                    Layout.preferredWidth: 150
+                    font.pixelSize: 15
+                    onClicked: {
+                        removeValuePopup.close();
+                    }
+                }
+            }
+        }
+    }
+
     function addValue(){
         panel.addEmptyValueObject()
         valuesView.forceLayout()
     }
+
     function removeValue(index){
-        panel.removeValueObject(index)
-        valuesView.forceLayout()
+        removeValuePopup.valueIndex = index
+        removeValuePopup.open()
     }
 }

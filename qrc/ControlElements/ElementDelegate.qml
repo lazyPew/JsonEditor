@@ -40,6 +40,7 @@ ItemDelegate{
                     Layout.leftMargin: 10
                     font.pixelSize: fontSize
                 }
+
                 ComboBox{
                     id:deviceCombo
                     Layout.fillWidth:true
@@ -54,6 +55,7 @@ ItemDelegate{
                         }
                     }
                 }
+
                 Label{
                     text: "Имя значения : "
                     wrapMode: Text.WordWrap
@@ -136,6 +138,7 @@ ItemDelegate{
                                 valueRole = text
                         }
                     }
+
                     ComboBox{
                         id: enumValueCombo
                         visible: typeCombo.currentIndex === ValueObject.EnumType
@@ -146,7 +149,6 @@ ItemDelegate{
                             valueRole = JSON.parse(currentText)
                             displayText = JSON.stringify(valueRole)
                         }
-
                     }
                 }
 
@@ -170,6 +172,7 @@ ItemDelegate{
                             defaultValueRole = text
                         }
                     }
+
                     ComboBox{
                         id: defaultCombo
                         visible: typeCombo.currentIndex === ValueObject.EnumType
@@ -184,6 +187,7 @@ ItemDelegate{
                     }
                 }
             }
+
             Item{
                 Layout.fillWidth: true
             }
@@ -193,8 +197,8 @@ ItemDelegate{
                 scale: mainWindow.iconScaler
                 enabled: editable && valueText.text.length
                 icon.source: canBeNull
-                      ? "/Icons/null2"
-                      : "/Icons/nonull2"
+                      ? "/Icons/null"
+                      : "/Icons/nonull"
                 width:implicitWidth
                 onClicked:
                 {
@@ -202,7 +206,6 @@ ItemDelegate{
                     isNullRole = canBeNull
                 }
             }
-
 
             ToolButton{
                 Layout.alignment: Qt.AlignRight
@@ -218,6 +221,7 @@ ItemDelegate{
                     isEditableRole = editable
                 }
             }
+
             ToolButton{
                 Layout.alignment: Qt.AlignRight
                 scale: mainWindow.iconScaler
@@ -231,6 +235,7 @@ ItemDelegate{
 
             }
         }
+
         Label{
             text: "Описание : "
             wrapMode: Text.WordWrap
