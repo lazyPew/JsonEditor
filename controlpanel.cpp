@@ -28,9 +28,15 @@ void ControlPanel::addDevice(QString newDevice)
 }
 void ControlPanel::removeDevice(int index)
 {
+    _listOfDevices.at(index);
+    for(int i = 0; i < _valuesListModel->valueObjectsList().size(); ++i){
+        if(valuesListModel()->valueObjectAt(i)->device() == _listOfDevices.at(index))
+            removeValueObject(i);
+    }
     _listOfDevices.removeAt(index);
     emit listOfDevicesChanged(_listOfDevices);
 }
+
 
 void ControlPanel::addEmptyValueObject()
 {

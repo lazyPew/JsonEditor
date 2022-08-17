@@ -13,6 +13,7 @@
         <file>MainElements/EnumPage.qml</file>
         <file>MainElements/DevicePage.qml</file>
         <file>Popups/NewDevicePopup.qml</file>
+        <file>Popups/NewEnumPopup.qml</file>
     </qresource>
     <qresource prefix="/Icons">
         <file alias="exit">Icons/exit.png</file>

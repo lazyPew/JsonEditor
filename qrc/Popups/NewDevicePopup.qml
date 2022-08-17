@@ -1,4 +1,4 @@
-import QtQuick 2.12
+import QtQuick 2.11
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.3
 
@@ -13,6 +13,7 @@ Popup{
 
     contentItem: ColumnLayout{
         Layout.fillWidth: true
+        height: implicitHeight
         Label{
             Layout.fillWidth: true
             font.pixelSize: 20
@@ -55,6 +56,5 @@ Popup{
 
     function addDevice(text){
         panel.addDevice(text)
-        devicesView.forceLayout()
     }
 }

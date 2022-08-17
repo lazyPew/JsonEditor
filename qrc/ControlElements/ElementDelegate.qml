@@ -44,6 +44,7 @@ ItemDelegate{
                     id:deviceCombo
                     Layout.fillWidth:true
                     displayText: deviceRole
+
                     model: panel.listOfDevices
                     onActivated: {
                         if(deviceRole != currentText){
