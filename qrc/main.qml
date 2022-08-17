@@ -44,6 +44,10 @@ ApplicationWindow {
         id: newDevicePopup
     }
 
+    NewEnumPopup{
+        id: newEnumPopup
+    }
+
     TurnOffPopup{
         id: turnOffPopup
     }

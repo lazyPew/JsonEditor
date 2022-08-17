@@ -28,7 +28,6 @@ void ControlPanel::addDevice(QString newDevice)
 }
 void ControlPanel::removeDevice(int index)
 {
-    _listOfDevices.at(index);
     for(int i = 0; i < _valuesListModel->valueObjectsList().size(); ++i){
         if(valuesListModel()->valueObjectAt(i)->device() == _listOfDevices.at(index))
             removeValueObject(i);
@@ -38,8 +37,7 @@ void ControlPanel::removeDevice(int index)
 }
 
 
-void ControlPanel::addEmptyValueObject()
-{
+void ControlPanel::addEmptyValueObject(){
     ValueObject* newValue = new ValueObject(
                 *listOfDevices().begin(),
                 "",
@@ -50,23 +48,32 @@ void ControlPanel::addEmptyValueObject()
     _valuesListModel->addValueObject(newValue);
 }
 
-void ControlPanel::removeValueObject(int index)
-{
+void ControlPanel::removeValueObject(int index){
     _valuesListModel->valueObjectRemoving(index);
 }
 
-void ControlPanel::addCustomEnum()
-{
-
+bool ControlPanel::addCustomEnum(QString enumName){
+    if(_customEnumsMap.keys().contains(enumName))
+        return false;
+    _customEnumsMap[enumName] = QVariantList();
+    emit listOfEnumsChanged(_customEnumsMap.keys());
+    return true;
 }
 
-void ControlPanel::updateCustomEnum(QString enumName, QVariantList list)
-{
+void ControlPanel::updateCustomEnum(QString enumName, QVariantList list){
     _customEnumsMap[enumName] = list;
 }
 
-void ControlPanel::saveToJsonFile(QString newJsonPath)
-{
+void ControlPanel::removeCustomEnum(QString enumName){
+    for(int i = 0; i < _valuesListModel->valueObjectsList().size(); ++i){
+        if(valuesListModel()->valueObjectAt(i)->type() == enumName)
+            removeValueObject(i);
+    }
+    _customEnumsMap.remove(enumName);
+    emit listOfEnumsChanged(_customEnumsMap.keys());
+}
+
+void ControlPanel::saveToJsonFile(QString newJsonPath){
     if (newJsonPath.isEmpty())
          newJsonPath = (QCoreApplication::applicationDirPath()).append("/" + QDateTime::currentDateTime().toString("MMdd_HHmmss") + ".json");
     qDebug() << "save to" << newJsonPath;
@@ -83,8 +90,7 @@ void ControlPanel::saveToJsonFile(QString newJsonPath)
 }
 
 
-void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc)
-{
+void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc){
     for(QString key : _customEnumsMap.keys()){
         QJsonObject enumJson;
         enumJson.insert("type", "enum");
@@ -93,8 +99,7 @@ void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc)
     }
 }
 
-void ControlPanel::openJsonFile(QString jsonPath)
-{
+void ControlPanel::openJsonFile(QString jsonPath){
     _valuesListModel->clearList();
 
     qDebug() << "open" << jsonPath;
@@ -108,11 +113,9 @@ void ControlPanel::openJsonFile(QString jsonPath)
     }
     file.close();
     parseJson(jsonDoc.object());
-
 }
 
-void ControlPanel::parseJson(QJsonObject jsonObject)
-{
+void ControlPanel::parseJson(QJsonObject jsonObject){
     for(QString devName : jsonObject.keys()){
         QJsonObject devObject = jsonObject.value(devName).toObject();
         if(devName.contains("_enum")){
@@ -132,8 +135,6 @@ void ControlPanel::parseJson(QJsonObject jsonObject)
                             valJsonObject.value("value")
                             );
                 newValue->setType(valJsonObject.value("type").toString());
-
-                qDebug() << newValue->type();
 
                 if(valJsonObject.value("isEditable") != QJsonValue::Undefined)
                     newValue->setIsEditable(valJsonObject.value("isEditable").toBool());

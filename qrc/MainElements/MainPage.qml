@@ -35,7 +35,7 @@ Page {
             id: enumButton
             Layout.fillWidth: true
             Layout.preferredHeight: 43
-            text: "enum ->"
+            text: "Перечисления ->"
             onClicked: goToEnum()
         }
     }

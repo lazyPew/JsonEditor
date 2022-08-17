@@ -86,7 +86,7 @@ Page {
             height: implicitHeight
             Label{
                 Layout.fillWidth: true
-                font.pixelSize: 20
+                font.pixelSize: 15
                 wrapMode: Text.Wrap
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter

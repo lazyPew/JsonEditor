@@ -22,14 +22,12 @@ set(SOURCES
     main.cpp
     controlpanel.cpp
     valueslistmodel.cpp
-    customenumslistmodel.cpp
     )
 
 set(HEADERS
     valuemaps.h
     controlpanel.h
     valueslistmodel.h
-    customenumslistmodel.h
     )
 
 set(DISTFILES

@@ -23,16 +23,17 @@ Page {
             id: addEnumButton
             Layout.fillWidth: true
             Layout.preferredHeight: 43
-            text: "Добавить тип enum"
+            text: "Добавить новое перечисление"
             icon.source: "/Icons/add"
-            onClicked: addEnum()
+            onClicked: newEnumPopup.open()
+
         }
     }
     ListView{
         id: enumsView
         anchors.fill: parent
         spacing: 20
-        model:panel.listOfEnums()
+        model:panel.listOfEnums
         interactive: false
 
         ScrollBar.vertical: ScrollBar {
@@ -44,31 +45,94 @@ Page {
 
         delegate: ItemDelegate{
             width: parent.width - scroll.width
-            contentItem: ColumnLayout{
-                Layout.fillWidth:true
-                Layout.fillHeight:true
-                TapHandler{
-                    onTapped: area.focus = false}
-                Label{
+            contentItem: RowLayout{
+                Layout.fillWidth: true
+                ColumnLayout{
                     Layout.fillWidth:true
-                    text: modelData
-                    wrapMode: Text.WordWrap
-                    font.bold: true
-                    horizontalAlignment: Text.AlignHCenter
-                    font.pixelSize: 20
+                    Layout.fillHeight:true
+                    TapHandler{
+                        onTapped: area.focus = false}
+                    Label{
+                        Layout.fillWidth:true
+                        text: modelData
+                        wrapMode: Text.WordWrap
+                        font.bold: true
+                        horizontalAlignment: Text.AlignHCenter
+                        font.pixelSize: 20
+                    }
+                    TextArea{
+                        id: area
+                        Layout.fillWidth:true
+                        text: JSON.stringify(panel.valuesListOfEnum(modelData))
+                        onEditingFinished: panel.updateCustomEnum(modelData, JSON.parse(text))
+                    }
                 }
-                TextArea{
-                    id: area
-                    Layout.fillWidth:true
-                    text: JSON.stringify(panel.valuesListOfEnum(modelData))
-                    onEditingFinished: panel.updateCustomEnum(modelData, JSON.parse(text))
+                ToolButton{
+                    Layout.alignment: Qt.AlignRight
+                    scale: mainWindow.iconScaler
+                    icon.source: "/Icons/delete"
+                    icon.color: enabled ? "red" : "grey"
+                    width:implicitWidth
+                    onClicked: {
+                        removeEnumPopup.enumName = modelData
+                        removeEnumPopup.open()
+                    }
                 }
             }
         }
-
     }
-    function addEnum(){
-        panel.addCustomEnum()
-        enumsView.forceLayout()
+
+
+    Popup{
+        id: removeEnumPopup
+        x: (mainWindow.width - width ) / 2
+        y: (mainWindow.contentItem.height - height) / 2
+        width: mainWindow.width / 2
+        modal: true
+        focus: true
+        closePolicy: Popup.NoAutoClose
+
+        property string enumName
+        contentItem: ColumnLayout{
+            Layout.fillWidth: true
+            height: implicitHeight
+            Label{
+                Layout.fillWidth: true
+                font.pixelSize: 15
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideMiddle
+                text: "При удалении данного перечисления будут также удалены все связанные с ним значения.\nПодтвердить удаление?"
+            }
+            RowLayout {
+                id: buttonsRow
+                Layout.alignment: Qt.AlignHCenter
+
+                Button {
+                    text: "ПОДТВЕРДИТЬ"
+                    Layout.preferredWidth: 150
+                    font.pixelSize: 15
+                    onClicked: {
+                        panel.removeCustomEnum(removeEnumPopup.enumName);
+                        removeEnumPopup.close();
+                    }
+                }
+                Button {
+                    text: "ОТМЕНА"
+                    Layout.preferredWidth: 150
+                    font.pixelSize: 15
+                    onClicked: {
+                        removeEnumPopup.close();
+                    }
+                }
+            }
+        }
+    }
+
+    Connections{
+        target: newEnumPopup
+        onEnumAdded: enumsView.forceLayout()
+
     }
 }

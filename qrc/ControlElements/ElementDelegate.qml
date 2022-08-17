@@ -104,10 +104,10 @@ ItemDelegate{
                     id:enumCombo
                     visible: typeCombo.currentIndex === ValueObject.EnumType
                     Layout.fillWidth:true
-                    currentIndex: panel.listOfEnums().indexOf(typeRole)
-                    model: panel.listOfEnums()
+                    currentIndex: panel.listOfEnums.indexOf(typeRole)
+                    model: panel.listOfEnums
                     enabled: isEditableRole
-                    onAccepted: {
+                    onActivated: {
                         enumValueCombo.currentIndex = 1
                         typeRole = currentText
                     }

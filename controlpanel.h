@@ -13,9 +13,14 @@ class ControlPanel : public QObject
     Q_PROPERTY(ValuesListModel* valuesListModel
                READ valuesListModel
                CONSTANT)
+
     Q_PROPERTY(QStringList listOfDevices
                READ listOfDevices
                NOTIFY listOfDevicesChanged)
+
+    Q_PROPERTY(QStringList listOfEnums
+               READ listOfEnums
+               NOTIFY listOfEnumsChanged)
 
 public:
     ControlPanel(QObject *parent = nullptr);
@@ -33,8 +38,9 @@ public slots:
     void addEmptyValueObject();
     void removeValueObject(int index);
 
-    void addCustomEnum();
+    bool addCustomEnum(QString enumName);
     void updateCustomEnum(QString enumName, QVariantList list);
+    void removeCustomEnum(QString enumName);
 
     void saveToJsonFile(QString newJsonPath);
     void openJsonFile(QString jsonPath = ":/test2");
@@ -43,12 +49,14 @@ public slots:
 
 signals:
     void listOfDevicesChanged(QStringList);
+    void listOfEnumsChanged(QStringList);
     void shutdownNow(int returnCode);
 
 private:
     void shutdown(int returnCode);
-    void parseJson(QJsonObject jsonObject);
     void registerQmlTypes();
+
+    void parseJson(QJsonObject jsonObject);
     void enumsToJson(QJsonObject&);
 
 private:
