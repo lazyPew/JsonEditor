@@ -29,7 +29,7 @@ Page {
         }
     }
     ListView{
-        id: valuesView
+        id: enumsView
         anchors.fill: parent
         spacing: 20
         model:panel.listOfEnums()
@@ -68,7 +68,7 @@ Page {
 
     }
     function addEnum(){
-        panel.addEmptyValueObject()
-        valuesView.forceLayout()
+        panel.addCustomEnum()
+        enumsView.forceLayout()
     }
 }

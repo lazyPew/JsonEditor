@@ -40,6 +40,10 @@ ApplicationWindow {
         }
     }
 
+    NewDevicePopup{
+        id: newDevicePopup
+    }
+
     TurnOffPopup{
         id: turnOffPopup
     }
