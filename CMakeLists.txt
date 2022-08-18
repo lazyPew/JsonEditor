@@ -23,6 +23,7 @@ set(SOURCES
     valueobject.cpp
     controlpanel.cpp
     valueslistmodel.cpp
+    additionalfields.cpp
     )
 
 set(HEADERS
@@ -30,6 +31,7 @@ set(HEADERS
     valueobject.h
     controlpanel.h
     valueslistmodel.h
+    additionalfields.h
     )
 
 set(DISTFILES

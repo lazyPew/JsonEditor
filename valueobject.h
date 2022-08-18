@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QJsonValue>
 #include <QJsonObject>
+#include <QDebug>
 
 class ValueObject : public QObject
 {
@@ -34,21 +35,29 @@ public:
                 QJsonValue value = QJsonValue::Null,
                 bool isEditable = true,
                 bool isNull = true,
-                QJsonValue defaultValue = QJsonValue::Null,
+                QJsonValue defaultValue = QJsonValue::Undefined,
                 QString desc = ""
             );
 
 public slots:
+    //getters
     QString device() const              { return _device; }
     QString name() const                { return _name; }
     uint typeCode() const               { return _typeCode; }
     QString type() const                { return _type; }
-    QJsonValue value() const            { return _value; }
+    QJsonValue value() const            { qDebug() << _value; return _value; }
     bool isEditable() const             { return _isEditable; }
     bool isNull() const                 { return _isNull; }
-    QJsonValue defaultValue() const     { return _defaultValue; }
+    QJsonValue defaultValue() const     { qDebug() << _defaultValue; return _defaultValue; }
     QString desc() const                { return _desc; }
 
+    QJsonValue maxValue() const;
+    QJsonValue minValue() const;
+    QVariant except() const;
+    QString units() const;
+    QString regex() const;
+
+    //setters
     void setDevice(QString newValue);
     void setName(QString newValue);
     void setTypeCode(uint newValue);
@@ -58,6 +67,13 @@ public slots:
     void setIsNull(bool newValue);
     void setDefaultValue(QJsonValue newValue);
     void setDesc(QString newValue);
+
+    void setMaxValue(QJsonValue newValue);
+    void setMinValue(QJsonValue newValue);
+    void setExcept(QVariant newValue);
+    void setUnits(QString newValue);
+    void setRegex(QString newValue);
+
 
     QJsonObject getJson();
 
@@ -73,6 +89,9 @@ signals:
     void descChanged(QString);
 
 private:
+    void clearAdditionalFields();
+
+private:
     QString _device;
     QString _name;
     uint _typeCode;
@@ -80,8 +99,9 @@ private:
     QJsonValue _value;
     bool _isEditable = true;
     bool _isNull = true;
-    QJsonValue _defaultValue = QJsonValue::Null;
+    QJsonValue _defaultValue = QJsonValue::Undefined;
     QString _desc = "";
+    QJsonObject _additionalFields = QJsonObject();
 
 };
 

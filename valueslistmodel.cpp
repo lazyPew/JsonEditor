@@ -52,6 +52,18 @@ QVariant ValuesListModel::data(const QModelIndex &index, int role) const
                                 _valueObjectsList.at(row)->defaultValue());
     case static_cast<int>(Roles::DescRole):
         return _valueObjectsList.at(row)->desc();
+
+    case static_cast<int>(Roles::MaxRole):
+        return _valueObjectsList.at(row)->maxValue();
+    case static_cast<int>(Roles::MinRole):
+        return _valueObjectsList.at(row)->minValue();
+    case static_cast<int>(Roles::ExceptRole):
+        return _valueObjectsList.at(row)->except();
+    case static_cast<int>(Roles::RegexRole):
+        return _valueObjectsList.at(row)->regex();
+    case static_cast<int>(Roles::UnitsRole):
+        return _valueObjectsList.at(row)->units()
+                ;
     default:
         return QVariant();
     }
@@ -95,8 +107,26 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         valueObject->setDefaultValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
-    case DescRole:
-        valueObject->setDesc(value.toString());
+        //-----------------//
+
+    case MaxRole:
+        valueObject->setMaxValue(convertToJsonValue(valueObject->typeCode(),value));
+        break;
+
+    case MinRole:
+        valueObject->setMinValue(convertToJsonValue(valueObject->typeCode(),value));
+        break;
+
+    case ExceptRole:
+        valueObject->setExcept(value);
+        break;
+
+    case RegexRole:
+        valueObject->setRegex(value.toString().replace(QRegExp("\""), ""));
+        break;
+
+    case UnitsRole:
+        valueObject->setUnits(value.toString().replace(QRegExp("\""), ""));
         break;
 
     default:
@@ -113,6 +143,7 @@ Qt::ItemFlags ValuesListModel::flags(const QModelIndex &index) const
 QHash<int, QByteArray> ValuesListModel::roleNames() const
 {
     QHash<int, QByteArray> roles;
+
     roles[static_cast<int>(Roles::DeviceRole)] = "deviceRole";
     roles[static_cast<int>(Roles::NameRole)] = "nameRole";
     roles[static_cast<int>(Roles::TypeRole)] = "typeRole";
@@ -122,6 +153,11 @@ QHash<int, QByteArray> ValuesListModel::roleNames() const
     roles[static_cast<int>(Roles::IsNullRole)] = "isNullRole";
     roles[static_cast<int>(Roles::DescRole)] = "descRole";
     roles[static_cast<int>(Roles::DefaultValueRole)] = "defaultValueRole";
+    roles[static_cast<int>(Roles::MaxRole)] = "maxRole";
+    roles[static_cast<int>(Roles::MinRole)] = "minRole";
+    roles[static_cast<int>(Roles::ExceptRole)] = "exceptRole";
+    roles[static_cast<int>(Roles::RegexRole)] = "regexRole";
+    roles[static_cast<int>(Roles::UnitsRole)] = "unitsRole";
     return roles;
 }
 
@@ -181,9 +217,10 @@ QVariant ValuesListModel::convertFromJsonValue(uint type, QJsonValue jsonValue) 
     case ValueObject::ValueType::DomenType:
     case ValueObject::ValueType::GnssStringType:
         return jsonValue.toString();
-    case ValueObject::ValueType::IpDigitType:
     case ValueObject::ValueType::IntType:
         return jsonValue.toInt();
+    case ValueObject::ValueType::IpDigitType:
+        return jsonValue.toVariant().toUInt();
     case ValueObject::ValueType::FloatType:
         return jsonValue.toDouble();
     case ValueObject::ValueType::BooleanType:
@@ -207,9 +244,9 @@ QJsonValue ValuesListModel::convertToJsonValue(uint type, QVariant qvar) const
     case ValueObject::ValueType::DomenType:
     case ValueObject::ValueType::GnssStringType:
         return QJsonValue(qvar.toString().replace(QRegExp("\""), ""));
-    case ValueObject::ValueType::IpDigitType:
     case ValueObject::ValueType::IntType:
         return QJsonValue(qvar.toInt());
+    case ValueObject::ValueType::IpDigitType:
     case ValueObject::ValueType::FloatType:
         return QJsonValue(qvar.toDouble());
     case ValueObject::ValueType::BooleanType:

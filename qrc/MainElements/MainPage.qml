@@ -67,6 +67,7 @@ Page {
                 valuesView.forceLayout()
             }
             onDeleteValue: removeValue(index)
+            onOutOfRange: outOfRangePopup.open()
 
         }
         section.property: "deviceRole"
@@ -100,12 +101,13 @@ Page {
         x: (mainWindow.width - width ) / 2
         y: (mainWindow.contentItem.height - height) / 2
         width: mainWindow.width / 2
-        height: contentColumn.implicitHeight
+        height: 150
         modal: true
         focus: true
         contentItem: ColumnLayout{
-            id:contentColumn
+            id: nullColumn
             Layout.fillWidth: true
+            Layout.preferredHeight: implicitHeight
             Label{
                 Layout.fillWidth: true
                 font.pixelSize: 20
@@ -119,8 +121,39 @@ Page {
                 text: "OK"
                 Layout.preferredWidth: 80
                 Layout.alignment: Qt.AlignHCenter
-                height:implicitHeight
+                height:50
                 onClicked: nullIsNotAllowedPopup.close()
+            }
+        }
+    }
+
+    Popup{
+        id: outOfRangePopup
+        x: (mainWindow.width - width ) / 2
+        y: (mainWindow.contentItem.height - height) / 2
+        width: mainWindow.width / 2
+        height: 150
+        modal: true
+        focus: true
+        contentItem: ColumnLayout{
+            id: rangeColumn
+            Layout.fillWidth: true
+            Layout.preferredHeight: implicitHeight
+            Label{
+                Layout.fillWidth: true
+                font.pixelSize: 20
+                wrapMode: Text.Wrap
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                elide: Text.ElideMiddle
+                text: "Данное значение выходит за границы указанного диапазона!"
+            }
+            Button{
+                text: "OK"
+                Layout.preferredWidth: 80
+                Layout.alignment: Qt.AlignHCenter
+                height:50
+                onClicked: outOfRangePopup.close()
             }
         }
     }

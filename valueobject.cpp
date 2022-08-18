@@ -1,5 +1,8 @@
 #include "valueobject.h"
 #include "valuemaps.h"
+#include <QJsonDocument>
+#include <QJsonArray>
+
 
 ValueObject::ValueObject(
         QString device,
@@ -22,6 +25,26 @@ ValueObject::ValueObject(
     , _desc(desc)
 {}
 
+QJsonValue ValueObject::maxValue() const {
+//    if(_additionalFields.value("max") != QJsonValue::Undefined)
+        return _additionalFields.value("max");
+//    else
+//        return QJsonValue::Null;
+}
+QJsonValue ValueObject::minValue() const {
+//    if(_additionalFields.value("min") != QJsonValue::Undefined)
+        return _additionalFields.value("min");
+//    else
+//        return QJsonValue::Null;
+}
+QVariant ValueObject::except() const {
+    return (_additionalFields.value("except").toArray());
+}
+
+QString ValueObject::units() const { return _additionalFields.value("units").toString(); }
+QString ValueObject::regex() const { return _additionalFields.value("regex").toString(); }
+
+
 QJsonObject ValueObject::getJson()
 {
     QJsonObject valueJson;
@@ -31,6 +54,12 @@ QJsonObject ValueObject::getJson()
     valueJson.insert("isNull", isNull());
     valueJson.insert("default", defaultValue());
     valueJson.insert("desc", desc());
+
+    if (!_additionalFields.isEmpty()){
+        for(QString field: _additionalFields.keys())
+            valueJson.insert(field,_additionalFields.value(field));
+//            _additionalFields.remove(field);
+    }
     return valueJson;
 }
 
@@ -55,6 +84,7 @@ void ValueObject::setTypeCode(uint newValue)
 {
     if(newValue != _typeCode){
         _typeCode = newValue;
+        clearAdditionalFields();
         if(_typeCode != ValueType::EnumType)
             setType(getType(_typeCode));
         emit typeCodeChanged(_typeCode);
@@ -91,6 +121,15 @@ void ValueObject::setIsNull(bool newValue)
         emit isNullChanged(_isNull);
     }
 }
+
+void ValueObject::setDefaultValue(QJsonValue newValue)
+{
+    if(newValue != _defaultValue){
+        _defaultValue = newValue;
+        emit defaultValueChanged(_defaultValue);
+    }
+}
+
 void ValueObject::setDesc(QString newValue)
 {
     if(newValue != _desc){
@@ -99,10 +138,69 @@ void ValueObject::setDesc(QString newValue)
     }
 }
 
-void ValueObject::setDefaultValue(QJsonValue newValue)
+void ValueObject::setMaxValue(QJsonValue newValue)
 {
-    if(newValue != _defaultValue){
-        _defaultValue = newValue;
-        emit defaultValueChanged(_defaultValue);
+    qDebug() <<_additionalFields;
+
+    if(newValue != _additionalFields.value("max")){
+        _additionalFields.insert("max",newValue);
     }
+    qDebug() <<_additionalFields;
+
+}
+
+
+void ValueObject::setMinValue(QJsonValue newValue)
+{
+    qDebug() <<_additionalFields;
+
+    if(newValue != _additionalFields.value("min")){
+        _additionalFields.insert("min",newValue);
+    }
+    qDebug() <<_additionalFields;
+}
+
+
+void ValueObject::setExcept(QVariant newValue)
+{    qDebug() <<_additionalFields;
+     QJsonArray newArray = QJsonArray(QJsonDocument::fromJson(
+                                   newValue.toByteArray()).array());
+     if(newArray != _additionalFields.value("except").toArray()){
+         _additionalFields.insert("except",newArray);
+     }
+
+     qDebug() <<_additionalFields;
+}
+
+
+void ValueObject::setUnits(QString newValue)
+{
+    qDebug() <<_additionalFields;
+
+    if(newValue != _additionalFields.value("units").toString()){
+        _additionalFields.insert("units",newValue);
+    }
+    qDebug() <<_additionalFields;
+}
+
+
+void ValueObject::setRegex(QString newValue)
+{
+    qDebug() <<_additionalFields;
+
+    if(newValue != _additionalFields.value("regex").toString()){
+        if(!newValue.isEmpty())
+            _additionalFields.insert("regex",newValue);
+        else
+            _additionalFields.remove("regex");
+    }
+    qDebug() <<_additionalFields;
+    qDebug() <<_additionalFields.isEmpty();
+}
+
+void ValueObject::clearAdditionalFields(){
+    qDebug() <<_additionalFields;
+    for(QString field: _additionalFields.keys())
+        _additionalFields.remove(field);
+    qDebug() <<_additionalFields;
 }

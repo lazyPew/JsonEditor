@@ -8,7 +8,7 @@ import ValueObjectsModule 1.0
 ItemDelegate{
     id: delegate
 
-    // TODO dynamic creation with createQmlObject()
+    // TODO remake this class using dynamic creation with createQmlObject()
 
     property int fontSize: 15
     property bool editable: isEditableRole
@@ -19,6 +19,7 @@ ItemDelegate{
     signal nullValue()
     signal deviceChanged()
     signal deleteValue()
+    signal outOfRange()
 
     property var textColor: editable
                             ? "white"
@@ -88,7 +89,7 @@ ItemDelegate{
                     model: valueTypes
                     onActivated: {
                         enumCombo.currentIndex = 1
-                        valueRole = ""
+                        clearTextFields()
                         typeCodeRole = currentIndex
                     }
                 }
@@ -110,7 +111,6 @@ ItemDelegate{
                     model: panel.listOfEnums
                     enabled: isEditableRole
                     onActivated: {
-                        enumValueCombo.currentIndex = 1
                         typeRole = currentText
                     }
                 }
@@ -125,7 +125,7 @@ ItemDelegate{
                 RowLayout{
                     Layout.fillWidth:true
                     TextField{
-                        id: valueText
+                        id: valueField
                         Layout.fillWidth:true
                         visible: typeCombo.currentIndex !== ValueObject.EnumType
                         color: textColor
@@ -134,9 +134,18 @@ ItemDelegate{
                             if(!canBeNull && !text.length){
                                 text = JSON.stringify(valueRole)
                                 nullValue()
-                            }else
+                            }
+                            else if(!checkRange(text)){
+                                text = JSON.stringify(valueRole)
+                                outOfRange()
+                            }
+                            else
                                 valueRole = text
+//                            console.log("!checkRange(text)" + !checkRange(text))
+                            //setValue(valueField.text)
                         }
+
+
                     }
 
                     ComboBox{
@@ -154,6 +163,7 @@ ItemDelegate{
 
 
                 Label{
+                    id:defaultLabel
                     text: "Значение по умолчанию : "
                     wrapMode: Text.WordWrap
                     Layout.leftMargin: 10
@@ -163,11 +173,11 @@ ItemDelegate{
                 RowLayout{
                     Layout.fillWidth:true
                     TextField{
-                        id: defaultText
+                        id: defaultField
                         Layout.fillWidth:true
                         visible: typeCombo.currentIndex !== ValueObject.EnumType
                         color: textColor
-                        text: JSON.stringify(defaultValueRole)
+                        text: defaultValueRole !== undefined ? (JSON.stringify(defaultValueRole)) : ""
                         onEditingFinished: {
                             defaultValueRole = text
                         }
@@ -186,6 +196,114 @@ ItemDelegate{
 
                     }
                 }
+
+
+                Label{
+                    id:regexLabel
+                    visible: isStringType()
+                    text: "Регулярное выражение: "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id:regexField
+                    visible: isStringType()
+                    text: JSON.stringify(regexRole)
+                    Layout.fillWidth:true
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        regexRole = text
+                    }
+                }
+
+                Label{
+                    id: minValueLabel
+                    visible: isNumberType()
+                    text: "Мин. значение диапазона: "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id: minValueField
+                    visible: isNumberType()
+                    text: minRole !== undefined ? (minRole) : ""
+                    Layout.fillWidth:true
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        minRole = text
+                    }
+                    validator: DoubleValidator{notation: DoubleValidator.StandardNotation}
+                }
+
+                Label{
+                    id: maxValueLabel
+                    visible: isNumberType()
+                    text: "Макс. значение диапазона: "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id: maxValueField
+                    visible: isNumberType()
+                    text: maxRole !== undefined ? (maxRole) : ""
+                    Layout.fillWidth:true
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        maxRole = text
+                    }
+                    validator: DoubleValidator{notation: DoubleValidator.StandardNotation}
+                }
+
+                Label{
+                    id:exceptLabel
+                    visible: isNumberType()
+                    text: "Исключение из диапазона: "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id:exceptField
+                    visible: isNumberType()
+                    text: JSON.stringify(exceptRole)
+                    Layout.fillWidth:true
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        exceptRole = text
+                    }
+                }
+
+                Label{
+                    id:unitsLabel
+                    visible: isNumberType()
+                    text: "Единицы измерения: "
+                    wrapMode: Text.WordWrap
+                    Layout.leftMargin: 10
+                    font.pixelSize: fontSize
+                }
+
+                TextField{
+                    id:unitsField
+                    visible: isNumberType()
+                    text: JSON.stringify(unitsRole)
+                    Layout.fillWidth:true
+                    enabled: editable
+                    color: textColor
+                    onEditingFinished: {
+                        unitsRole = text
+                    }
+                }
             }
 
             Item{
@@ -195,7 +313,7 @@ ItemDelegate{
             ToolButton{
                 Layout.alignment: Qt.AlignRight
                 scale: mainWindow.iconScaler
-                enabled: editable && valueText.text.length
+                enabled: editable && valueField.text.length
                 icon.source: canBeNull
                       ? "/Icons/null"
                       : "/Icons/nonull"
@@ -237,6 +355,7 @@ ItemDelegate{
         }
 
         Label{
+            id:descLabel
             text: "Описание : "
             wrapMode: Text.WordWrap
             Layout.leftMargin: 10
@@ -244,6 +363,7 @@ ItemDelegate{
         }
 
         TextArea{
+            id:descArea
             wrapMode: TextEdit.Wrap
             enabled: editable
             Layout.fillWidth:true
@@ -259,6 +379,70 @@ ItemDelegate{
         typeCombo.enabled = editable
         enumCombo.enabled = editable
         enumValueCombo.enabled = editable
+    }
 
+    function clearTextFields(){
+        valueField.text = JSON.stringify(valueRole)
+        defaultField.text = JSON.stringify(defaultRole)
+        maxValueField.text = JSON.stringify(maxRole)
+        minValueField.text = JSON.stringify(minRole)
+        unitsField.text = JSON.stringify(unitsRole)
+        regexField.text = JSON.stringify(regexRole)
+    }
+
+    function setValue(text){
+        if(!canBeNull && !text.length){
+            valueRole = JSON.stringify(valueRole)
+            nullValue()
+        }
+        else if(!checkRange(text)){
+            console.log()
+            outOfRange()
+        }
+        else
+            valueRole = text
+        console.log("!checkRange(text)" + !checkRange(text))
+    }
+
+    function checkRange(text){
+//        for()
+        console.log("value = " + text)
+        console.log("max = " + maxRole)
+        console.log("min = " + minRole)
+        console.log("except = " + exceptRole)
+        console.log("text morethan maxRole " + (text > maxRole))
+        console.log("text lessthan minRole " + (text < minRole))
+        if(maxRole !== undefined && text > maxRole){
+            valueRole = (maxRole)
+            return false
+        }
+        if(minRole !== undefined && text < minRole){
+            valueRole = (minRole)
+            return false
+        }
+        if(exceptRole !== undefined && text > maxRole){
+
+            return false
+        }
+        return true
+
+    }
+
+    function isStringType(){
+        if(typeCombo.currentIndex === ValueObject.IpStringType
+                || typeCombo.currentIndex === ValueObject.DomenType
+                || typeCombo.currentIndex === ValueObject.GnssStringType)
+            return true
+        else
+            return false
+    }
+
+    function isNumberType(){
+        if(typeCombo.currentIndex === ValueObject.IntType
+                || typeCombo.currentIndex === ValueObject.FloatType
+                || typeCombo.currentIndex === ValueObject.IpDigitType)
+            return true
+        else
+            return false
     }
 }
