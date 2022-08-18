@@ -4,7 +4,7 @@
 #include <QQmlContext>
 
 #include "controlpanel.h"
-#include "valuemaps.h"
+#include "ValueModels/valuemaps.h"
 
 int main(int argc, char *argv[])
 {

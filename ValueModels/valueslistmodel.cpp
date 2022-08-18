@@ -88,6 +88,7 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         break;
 
     case TypeCodeRole:
+        qDebug() << uint(value.toInt());
         valueObject->setTypeCode(uint(value.toInt()));
         break;
 

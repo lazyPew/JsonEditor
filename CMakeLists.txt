@@ -20,18 +20,16 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 set(SOURCES
     main.cpp
-    valueobject.cpp
     controlpanel.cpp
-    valueslistmodel.cpp
-    additionalfields.cpp
+    ValueModels/valueobject.cpp
+    ValueModels/valueslistmodel.cpp
     )
 
 set(HEADERS
-    valuemaps.h
-    valueobject.h
     controlpanel.h
-    valueslistmodel.h
-    additionalfields.h
+    ValueModels/valuemaps.h
+    ValueModels/valueobject.h
+    ValueModels/valueslistmodel.h
     )
 
 set(DISTFILES

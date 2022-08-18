@@ -2,9 +2,11 @@
 #define VALUEOBJECT_H
 
 #include <QObject>
+#include <QDebug>
+
 #include <QJsonValue>
 #include <QJsonObject>
-#include <QDebug>
+#include <QJsonArray>
 
 class ValueObject : public QObject
 {
@@ -45,15 +47,15 @@ public slots:
     QString name() const                { return _name; }
     uint typeCode() const               { return _typeCode; }
     QString type() const                { return _type; }
-    QJsonValue value() const            { qDebug() << _value; return _value; }
+    QJsonValue value() const            { /*qDebug() << _value;*/ return _value; }
     bool isEditable() const             { return _isEditable; }
     bool isNull() const                 { return _isNull; }
-    QJsonValue defaultValue() const     { qDebug() << _defaultValue; return _defaultValue; }
+    QJsonValue defaultValue() const     { /*qDebug() << _defaultValue; */return _defaultValue; }
     QString desc() const                { return _desc; }
 
     QJsonValue maxValue() const;
     QJsonValue minValue() const;
-    QVariant except() const;
+    QVariantList except() const;
     QString units() const;
     QString regex() const;
 
@@ -90,6 +92,7 @@ signals:
 
 private:
     void clearAdditionalFields();
+    void resetFields();
 
 private:
     QString _device;

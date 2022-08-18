@@ -1,7 +1,7 @@
 #ifndef VALUEMAPS_H
 #define VALUEMAPS_H
 
-#include <valueobject.h>
+#include <ValueModels/valueobject.h>
 #include <QMap>
 
 static const QMap<uint, QString> valueTypesMap = {

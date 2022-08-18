@@ -88,9 +88,9 @@ ItemDelegate{
                     enabled: isEditableRole
                     model: valueTypes
                     onActivated: {
-                        enumCombo.currentIndex = 1
-                        clearTextFields()
                         typeCodeRole = currentIndex
+                        enumCombo.currentIndex = 0
+                        clearTextFields()
                     }
                 }
 
@@ -112,6 +112,10 @@ ItemDelegate{
                     enabled: isEditableRole
                     onActivated: {
                         typeRole = currentText
+//                        console.log(typeRole)
+//                        console.log(typeCodeRole)
+                        enumValueCombo.currentIndex = 0
+                        defaultCombo.currentIndex = 0
                     }
                 }
 
@@ -135,14 +139,15 @@ ItemDelegate{
                                 text = JSON.stringify(valueRole)
                                 nullValue()
                             }
-                            else if(!checkRange(text)){
+
+                            else if(isNumberType() && checkRange(text)){
+                                console.log("check" + checkRange(text))
+                                console.log("isnumb" + isNumberType())
                                 text = JSON.stringify(valueRole)
                                 outOfRange()
                             }
                             else
-                                valueRole = text
-//                            console.log("!checkRange(text)" + !checkRange(text))
-                            //setValue(valueField.text)
+                                valueRole = JSON.parse(text)
                         }
 
 
@@ -155,8 +160,11 @@ ItemDelegate{
                         model: panel.valuesListOfEnum(enumCombo.currentText)
                         displayText: JSON.stringify(valueRole)
                         onActivated: {
-                            valueRole = JSON.parse(currentText)
-                            displayText = JSON.stringify(valueRole)
+                            console.log(valueRole )
+
+                            displayText = currentText
+                            valueRole = JSON.parse(displayText)
+                            console.log(valueRole )
                         }
                     }
                 }
@@ -193,7 +201,10 @@ ItemDelegate{
                             defaultValueRole = JSON.parse(currentText)
                             displayText = JSON.stringify(defaultValueRole)
                         }
-
+                        onVisibleChanged: {
+                            if(visible)
+                                currentIndex = 1
+                        }
                     }
                 }
 
@@ -382,49 +393,52 @@ ItemDelegate{
     }
 
     function clearTextFields(){
-        valueField.text = JSON.stringify(valueRole)
-        defaultField.text = JSON.stringify(defaultRole)
-        maxValueField.text = JSON.stringify(maxRole)
-        minValueField.text = JSON.stringify(minRole)
-        unitsField.text = JSON.stringify(unitsRole)
-        regexField.text = JSON.stringify(regexRole)
+        valueField.text = ""//JSON.stringify(valueRole)
+        defaultField.text = ""//JSON.stringify(defaultRole)
+        maxValueField.text = ""//JSON.stringify(maxRole)
+        minValueField.text = ""//JSON.stringify(minRole)
+        unitsField.text = ""//JSON.stringify(unitsRole)
+        regexField.text = ""//JSON.stringify(regexRole)
     }
 
-    function setValue(text){
-        if(!canBeNull && !text.length){
-            valueRole = JSON.stringify(valueRole)
-            nullValue()
-        }
-        else if(!checkRange(text)){
-            console.log()
-            outOfRange()
-        }
-        else
-            valueRole = text
-        console.log("!checkRange(text)" + !checkRange(text))
-    }
+//    function setValue(text){
+//        if(!canBeNull && !text.length){
+//            valueRole = JSON.stringify(valueRole)
+//            nullValue()
+//        }
+//        else if(!checkRange(text)){
+//            console.log()
+//            outOfRange()
+//        }
+//        else
+//            valueRole = text
+//        console.log("!checkRange(text)" + !checkRange(text))
+//    }
 
     function checkRange(text){
-//        for()
-        console.log("value = " + text)
-        console.log("max = " + maxRole)
-        console.log("min = " + minRole)
-        console.log("except = " + exceptRole)
-        console.log("text morethan maxRole " + (text > maxRole))
-        console.log("text lessthan minRole " + (text < minRole))
+//        for(var i = 0; i < exceptRole.length; ++i)
+//            console.log(exceptRole[i])
+//        console.log(typeof(exceptRole))
+//        console.log("value = " + text)
+//        console.log("max = " + maxRole)
+//        console.log("min = " + minRole)
+//        console.log("except = " + exceptRole)
+//        console.log("text morethan maxRole " + (text > maxRole))
+//        console.log("text lessthan minRole " + (text < minRole))
+//        console.log("index in except " + exceptRole.indexOf(JSON.parse(text)))
         if(maxRole !== undefined && text > maxRole){
             valueRole = (maxRole)
-            return false
+            return true
         }
         if(minRole !== undefined && text < minRole){
             valueRole = (minRole)
-            return false
+            return true
         }
-        if(exceptRole !== undefined && text > maxRole){
-
-            return false
+        if(exceptRole !== undefined && exceptRole.indexOf(JSON.parse(text)) > -1){
+            return true
         }
-        return true
+        console.log("check is success")
+        return false
 
     }
 

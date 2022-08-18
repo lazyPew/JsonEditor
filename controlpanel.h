@@ -2,7 +2,7 @@
 #define CONTROLPANEL_H
 
 #include <QObject>
-#include "valuemaps.h"
+#include "ValueModels/valuemaps.h"
 
 class ValuesListModel;
 

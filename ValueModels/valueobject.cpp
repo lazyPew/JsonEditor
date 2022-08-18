@@ -1,8 +1,7 @@
 #include "valueobject.h"
 #include "valuemaps.h"
-#include <QJsonDocument>
-#include <QJsonArray>
 
+#include <QJsonDocument>
 
 ValueObject::ValueObject(
         QString device,
@@ -37,8 +36,8 @@ QJsonValue ValueObject::minValue() const {
 //    else
 //        return QJsonValue::Null;
 }
-QVariant ValueObject::except() const {
-    return (_additionalFields.value("except").toArray());
+QVariantList ValueObject::except() const {
+    return (_additionalFields.value("except").toArray().toVariantList());
 }
 
 QString ValueObject::units() const { return _additionalFields.value("units").toString(); }
@@ -82,11 +81,15 @@ void ValueObject::setName(QString newValue)
 
 void ValueObject::setTypeCode(uint newValue)
 {
+    qDebug() << _typeCode << newValue;
     if(newValue != _typeCode){
+        qDebug() << _typeCode;
         _typeCode = newValue;
+        qDebug() << _typeCode;
         clearAdditionalFields();
         if(_typeCode != ValueType::EnumType)
             setType(getType(_typeCode));
+        resetFields();
         emit typeCodeChanged(_typeCode);
     }
 }
@@ -166,8 +169,12 @@ void ValueObject::setExcept(QVariant newValue)
      QJsonArray newArray = QJsonArray(QJsonDocument::fromJson(
                                    newValue.toByteArray()).array());
      if(newArray != _additionalFields.value("except").toArray()){
-         _additionalFields.insert("except",newArray);
+        if(newArray.size()>0)
+            _additionalFields.insert("except",newArray);
+        else
+            _additionalFields.remove("except");
      }
+
 
      qDebug() <<_additionalFields;
 }
@@ -203,4 +210,11 @@ void ValueObject::clearAdditionalFields(){
     for(QString field: _additionalFields.keys())
         _additionalFields.remove(field);
     qDebug() <<_additionalFields;
+}
+
+void ValueObject::resetFields()
+{
+    _isNull = true;
+    _value = QJsonValue::Undefined;
+    _defaultValue = QJsonValue::Undefined;
 }

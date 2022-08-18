@@ -1,5 +1,5 @@
 #include "controlpanel.h"
-#include "valueslistmodel.h"
+#include "ValueModels/valueslistmodel.h"
 
 #include <QCoreApplication>
 #include "QQmlEngine"
