@@ -77,6 +77,7 @@ void ControlPanel::removeCustomEnum(QString enumName){
 }
 
 void ControlPanel::saveToJsonFile(QString newJsonPath){
+    newJsonPath = newJsonPath.trimmed();
     if (newJsonPath.isEmpty())
          newJsonPath = (QCoreApplication::applicationDirPath()).append("/" + QDateTime::currentDateTime().toString("MMdd_HHmmss") + ".json");
     qDebug() << "save to" << newJsonPath;
@@ -90,6 +91,8 @@ void ControlPanel::saveToJsonFile(QString newJsonPath){
     QTextStream out(&file);
     out << docJson.toJson() << "\n";
     file.close();
+    _fileName = newJsonPath.split("/").last();
+    emit fileNameChanged(_fileName);
 }
 
 void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc){
@@ -102,19 +105,26 @@ void ControlPanel::enumsToJson(QJsonObject& objForJsonDoc){
 }
 
 void ControlPanel::openJsonFile(QString jsonPath){
-    _valuesListModel->clearList();
-
     qDebug() << "open" << jsonPath;
-    QFile file(jsonPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    QFile file(jsonPath.trimmed());
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        emit openingFailed("Ошибка открытия файла: такого файла не существует.");
         return;
+    }
+
     QJsonParseError jsonError;
     QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll(),&jsonError);
     if (jsonError.error != QJsonParseError::NoError){
-        qDebug() << jsonError.errorString();
+        emit openingFailed("Ошибка открытия файла: " + jsonError.errorString());
+        file.close();
+        return;
     }
     file.close();
+
+    _valuesListModel->clearList();
     parseJson(jsonDoc.object());
+    _fileName = jsonPath.trimmed().split("/").last();
+    emit fileNameChanged(_fileName);
 }
 
 void ControlPanel::parseJson(QJsonObject jsonObject){

@@ -17,7 +17,7 @@ Popup {
         Layout.fillWidth: true
 
         Label {
-           id: submit_text
+           id: submitText
            Layout.fillWidth: true
            font.pixelSize: 20
            wrapMode: Text.Wrap
@@ -27,10 +27,22 @@ Popup {
            text: "Введите путь до файла"
         }
 
+
+        Label {
+           id: errorText
+           Layout.fillWidth: true
+           font.pixelSize: 13
+           wrapMode: Text.Wrap
+           visible: false
+           color: "orange"
+           horizontalAlignment: Text.AlignHCenter
+           verticalAlignment: Text.AlignVCenter
+           elide: Text.ElideMiddle
+        }
+
         TextField{
             id: textField
             Layout.fillWidth: true
-//            canPaste: true
         }
 
         RowLayout {
@@ -59,6 +71,21 @@ Popup {
 
     function confirmOpen() {
         panel.openJsonFile(textField.text);
-        popup.close();
+    }
+
+    Connections{
+        target: panel
+        onOpeningFailed:{
+            errorText.text = errorExplanation
+            errorText.visible = true
+            errorTimer.restart()
+        }
+        onFileNameChanged: popup.close();
+    }
+
+    Timer{
+        id: errorTimer
+        interval: 3000
+        onTriggered: errorText.visible = false
     }
 }

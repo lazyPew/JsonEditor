@@ -22,6 +22,10 @@ class ControlPanel : public QObject
                READ listOfEnums
                NOTIFY listOfEnumsChanged)
 
+    Q_PROPERTY(QString fileName
+               READ fileName
+               NOTIFY fileNameChanged)
+
 public:
     ControlPanel(QStringList args, QObject *parent = nullptr);
 
@@ -31,6 +35,8 @@ public slots:
     QStringList listOfDevices() const                       { return _listOfDevices; }
     QStringList listOfEnums() const                         { return _customEnumsMap.keys(); }
     QVariantList valuesListOfEnum(QString enumString) const { return _customEnumsMap.value(enumString); }
+
+    QString fileName() const                                { return _fileName; }
 
     void addDevice(QString newDevice);
     void removeDevice(int index);
@@ -50,6 +56,10 @@ public slots:
 signals:
     void listOfDevicesChanged(QStringList);
     void listOfEnumsChanged(QStringList);
+
+    void openingFailed(QString errorExplanation);
+    void fileNameChanged(QString fileName);
+
     void shutdownNow(int returnCode);
 
 private:
@@ -64,6 +74,8 @@ private:
 
 private:
     ValuesListModel* _valuesListModel;
+
+    QString _fileName;
 
     QStringList _listOfDevices;
     QMap<QString, QVariantList> _customEnumsMap;

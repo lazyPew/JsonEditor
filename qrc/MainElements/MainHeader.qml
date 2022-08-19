@@ -22,6 +22,21 @@ ToolBar {
             Layout.fillWidth: true
         }
 
+        Label{
+            id: fileNameLabel
+            Layout.fillWidth: true
+            font.pixelSize: 20
+            wrapMode: Text.Wrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideMiddle
+            text: panel.fileName
+        }
+
+        Item{
+            Layout.fillWidth: true
+        }
+
         ToolButton{
             id: saveButton
             scale: mainWindow.iconScaler
