@@ -25,22 +25,9 @@ ValueObject::ValueObject(
     , _desc(desc)
 {}
 
-QJsonValue ValueObject::maxValue() const {
-//    if(_additionalFields.value("max") != QJsonValue::Undefined)
-        return _additionalFields.value("max");
-//    else
-//        return QJsonValue::Null;
-}
-QJsonValue ValueObject::minValue() const {
-//    if(_additionalFields.value("min") != QJsonValue::Undefined)
-        return _additionalFields.value("min");
-//    else
-//        return QJsonValue::Null;
-}
-QVariantList ValueObject::except() const {
-    return (_additionalFields.value("except").toArray().toVariantList());
-}
-
+QJsonValue ValueObject::maxValue() const { return _additionalFields.value("max"); }
+QJsonValue ValueObject::minValue() const { return _additionalFields.value("min"); }
+QVariantList ValueObject::except() const { return (_additionalFields.value("except").toArray().toVariantList()); }
 QString ValueObject::units() const { return _additionalFields.value("units").toString(); }
 QString ValueObject::regex() const { return _additionalFields.value("regex").toString(); }
 
@@ -58,7 +45,6 @@ QJsonObject ValueObject::getJson()
     if (!_additionalFields.isEmpty()){
         for(QString field: _additionalFields.keys()){
             valueJson.insert(field,_additionalFields.value(field));
-//            _additionalFields.remove(field);
         }
     }
     return valueJson;
@@ -134,13 +120,10 @@ void ValueObject::setDefaultValue(QJsonValue newValue)
 
 void ValueObject::setDesc(QString newValue)
 {
-    qDebug() << newValue;
     if(newValue != _desc){
         _desc = newValue;
         emit descChanged(_desc);
     }
-    qDebug() << _desc;
-
 }
 
 void ValueObject::setMaxValue(QJsonValue newValue)
@@ -173,7 +156,6 @@ void ValueObject::setExcept(QVariant newValue)
        else
            _additionalFields.remove("except");
     }
-
 }
 
 

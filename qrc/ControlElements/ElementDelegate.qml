@@ -142,8 +142,11 @@ ItemDelegate{
                                 text = JSON.stringify(valueRole)
                                 outOfRange()
                             }
-                            else
-                                valueRole = JSON.parse(text)
+                            else{
+                                if(text != "")
+                                    valueRole = JSON.parse(text)
+                                else valueRole = text
+                            }
                         }
 
 
@@ -394,6 +397,8 @@ ItemDelegate{
 
     function checkRange(text){
 
+        if(test == "")
+            return false
         if(maxRole !== undefined && text > maxRole){
             valueRole = (maxRole)
             return true

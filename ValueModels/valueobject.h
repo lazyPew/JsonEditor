@@ -47,10 +47,10 @@ public slots:
     QString name() const                { return _name; }
     uint typeCode() const               { return _typeCode; }
     QString type() const                { return _type; }
-    QJsonValue value() const            { /*qDebug() << _value;*/ return _value; }
+    QJsonValue value() const            { return _value; }
     bool isEditable() const             { return _isEditable; }
     bool isNull() const                 { return _isNull; }
-    QJsonValue defaultValue() const     { /*qDebug() << _defaultValue; */return _defaultValue; }
+    QJsonValue defaultValue() const     { return _defaultValue; }
     QString desc() const                { return _desc; }
 
     QJsonValue maxValue() const;

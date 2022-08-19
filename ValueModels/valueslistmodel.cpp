@@ -106,6 +106,10 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         valueObject->setDefaultValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
+    case DescRole:
+        valueObject->setDesc(value.toString());
+        break;
+
         //-----------------//
 
     case MaxRole:
