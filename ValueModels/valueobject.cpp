@@ -2,6 +2,7 @@
 #include "valuemaps.h"
 
 #include <QJsonDocument>
+#include <QDebug>
 
 ValueObject::ValueObject(
         QString device,
@@ -55,9 +56,10 @@ QJsonObject ValueObject::getJson()
     valueJson.insert("desc", desc());
 
     if (!_additionalFields.isEmpty()){
-        for(QString field: _additionalFields.keys())
+        for(QString field: _additionalFields.keys()){
             valueJson.insert(field,_additionalFields.value(field));
 //            _additionalFields.remove(field);
+        }
     }
     return valueJson;
 }
@@ -81,11 +83,8 @@ void ValueObject::setName(QString newValue)
 
 void ValueObject::setTypeCode(uint newValue)
 {
-    qDebug() << _typeCode << newValue;
     if(newValue != _typeCode){
-        qDebug() << _typeCode;
         _typeCode = newValue;
-        qDebug() << _typeCode;
         clearAdditionalFields();
         if(_typeCode != ValueType::EnumType)
             setType(getType(_typeCode));
@@ -135,81 +134,70 @@ void ValueObject::setDefaultValue(QJsonValue newValue)
 
 void ValueObject::setDesc(QString newValue)
 {
+    qDebug() << newValue;
     if(newValue != _desc){
         _desc = newValue;
         emit descChanged(_desc);
     }
+    qDebug() << _desc;
+
 }
 
 void ValueObject::setMaxValue(QJsonValue newValue)
 {
-    qDebug() <<_additionalFields;
-
-    if(newValue != _additionalFields.value("max")){
+    if(newValue == QJsonValue::Null)
+        _additionalFields.remove("max");
+    else if(newValue != _additionalFields.value("max")){
         _additionalFields.insert("max",newValue);
     }
-    qDebug() <<_additionalFields;
-
 }
 
 
 void ValueObject::setMinValue(QJsonValue newValue)
 {
-    qDebug() <<_additionalFields;
-
-    if(newValue != _additionalFields.value("min")){
+    if(newValue == QJsonValue::Null)
+        _additionalFields.remove("min");
+    else if(newValue != _additionalFields.value("min")){
         _additionalFields.insert("min",newValue);
     }
-    qDebug() <<_additionalFields;
 }
 
 
 void ValueObject::setExcept(QVariant newValue)
-{    qDebug() <<_additionalFields;
-     QJsonArray newArray = QJsonArray(QJsonDocument::fromJson(
+{
+    QJsonArray newArray = QJsonArray(QJsonDocument::fromJson(
                                    newValue.toByteArray()).array());
-     if(newArray != _additionalFields.value("except").toArray()){
-        if(newArray.size()>0)
-            _additionalFields.insert("except",newArray);
-        else
-            _additionalFields.remove("except");
-     }
+    if(newArray != _additionalFields.value("except").toArray()){
+       if(newArray.size()>0)
+           _additionalFields.insert("except",newArray);
+       else
+           _additionalFields.remove("except");
+    }
 
-
-     qDebug() <<_additionalFields;
 }
 
 
 void ValueObject::setUnits(QString newValue)
 {
-    qDebug() <<_additionalFields;
-
     if(newValue != _additionalFields.value("units").toString()){
         _additionalFields.insert("units",newValue);
     }
-    qDebug() <<_additionalFields;
 }
 
 
 void ValueObject::setRegex(QString newValue)
 {
-    qDebug() <<_additionalFields;
-
     if(newValue != _additionalFields.value("regex").toString()){
         if(!newValue.isEmpty())
             _additionalFields.insert("regex",newValue);
         else
             _additionalFields.remove("regex");
     }
-    qDebug() <<_additionalFields;
-    qDebug() <<_additionalFields.isEmpty();
 }
 
 void ValueObject::clearAdditionalFields(){
-    qDebug() <<_additionalFields;
     for(QString field: _additionalFields.keys())
         _additionalFields.remove(field);
-    qDebug() <<_additionalFields;
 }
 
 void ValueObject::resetFields()

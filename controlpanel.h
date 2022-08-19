@@ -59,6 +59,7 @@ private:
     QString checkArguments(QStringList args);
 
     void parseJson(QJsonObject jsonObject);
+    void parseJsonFields(ValueObject* newValue, QJsonObject& valJsonObject);
     void enumsToJson(QJsonObject&);
 
 private:

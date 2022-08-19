@@ -2,11 +2,11 @@
 #define VALUEOBJECT_H
 
 #include <QObject>
-#include <QDebug>
 
 #include <QJsonValue>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QVariant>
 
 class ValueObject : public QObject
 {

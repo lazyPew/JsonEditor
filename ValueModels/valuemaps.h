@@ -18,7 +18,14 @@ static const QMap<uint, QString> valueTypesMap = {
     {ValueObject::ValueType::NullType, "null" }
 };
 
-
+static const QList<uint> extendableTypes = {
+    ValueObject::ValueType::IpStringType,
+    ValueObject::ValueType::IpDigitType,
+    ValueObject::ValueType::DomenType,
+    ValueObject::ValueType::GnssStringType,
+    ValueObject::ValueType::FloatType,
+    ValueObject::ValueType::IntType
+};
 
 static QStringList getStringTypes() { return valueTypesMap.values(); }
 static QString getType(uint typeCode) { return valueTypesMap.value(typeCode); }

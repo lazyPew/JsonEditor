@@ -13,11 +13,11 @@ Popup {
 
     contentItem: ColumnLayout {
         id: contentColumn
-        spacing: 10
+        spacing: 8
         Layout.fillWidth: true
 
         Label {
-           id: submit_text
+           id: submitText
            Layout.fillWidth: true
            font.pixelSize: 20
            wrapMode: Text.Wrap
@@ -27,9 +27,22 @@ Popup {
            text: "Введите путь до нового файла"
         }
 
+
+        Label {
+           id: attentionText
+           Layout.fillWidth: true
+           font.pixelSize: 12
+           wrapMode: Text.Wrap
+           horizontalAlignment: Text.AlignHCenter
+           verticalAlignment: Text.AlignVCenter
+           elide: Text.ElideMiddle
+           text: "(Примечание: при пустой пути файл сохранится в папке программы с датой и временем в качестве имени)"
+        }
+
         TextField{
             id: textField
             Layout.fillWidth: true
+//            canPaste: true
         }
 
         RowLayout {

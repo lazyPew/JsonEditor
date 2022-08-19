@@ -30,6 +30,7 @@ Popup {
         TextField{
             id: textField
             Layout.fillWidth: true
+//            canPaste: true
         }
 
         RowLayout {

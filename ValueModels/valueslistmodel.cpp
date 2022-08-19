@@ -4,7 +4,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QDebug>
 
 ValuesListModel::ValuesListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -88,7 +87,6 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         break;
 
     case TypeCodeRole:
-        qDebug() << uint(value.toInt());
         valueObject->setTypeCode(uint(value.toInt()));
         break;
 
@@ -111,11 +109,15 @@ bool ValuesListModel::setData(const QModelIndex &index, const QVariant &value, i
         //-----------------//
 
     case MaxRole:
-        valueObject->setMaxValue(convertToJsonValue(valueObject->typeCode(),value));
+        if(value.toString() == "")
+            valueObject->setMaxValue(QJsonValue::Null);
+        else valueObject->setMaxValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
     case MinRole:
-        valueObject->setMinValue(convertToJsonValue(valueObject->typeCode(),value));
+        if(value.toString() == "")
+            valueObject->setMinValue(QJsonValue::Null);
+        else valueObject->setMinValue(convertToJsonValue(valueObject->typeCode(),value));
         break;
 
     case ExceptRole:
